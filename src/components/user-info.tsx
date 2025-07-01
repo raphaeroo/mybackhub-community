@@ -1,5 +1,5 @@
 "use client";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 
 export function UserInfo() {

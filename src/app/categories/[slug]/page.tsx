@@ -19,7 +19,6 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 import topicsMock from "~/app/mocks/topics.json";
-import { useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -32,10 +31,11 @@ import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 
 type CategoryParams = { slug: string };
 
-export async function generateMetadata({ params }: { params: CategoryParams }) {
+export async function generateMetadata({ params }: { params: Promise<CategoryParams> }) {
+  const { slug } = await params;
   return {
-    title: `MyBackHub Community | Category: ${params.slug}`,
-    description: `Explore topics related to ${params.slug}.`,
+    title: `MyBackHub Community | Category: ${slug}`,
+    description: `Explore topics related to ${slug}.`,
   };
 }
 
@@ -47,18 +47,15 @@ type CategorySearchParams = {
 
 type Topic = (typeof topicsMock)[0];
 
-export default function Page({
+export default async function Page({
   searchParams,
 }: {
-  searchParams: CategorySearchParams;
+  searchParams: Promise<CategorySearchParams>;
 }) {
-  const filteredTopics = useMemo(
-    () =>
-      topicsMock.filter((topic: Topic) => {
-        return topic.category_id === Number(searchParams.categoryId);
-      }),
-    [searchParams.categoryId]
-  );
+  const params = await searchParams;
+  const filteredTopics = topicsMock.filter((topic: Topic) => {
+    return topic.category_id === Number(params.categoryId);
+  });
 
   return (
     <section className="pt-8 px-8">
@@ -71,7 +68,7 @@ export default function Page({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage className="text-tertiary font-medium">
-                {searchParams?.title}
+                {params?.title}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -80,9 +77,7 @@ export default function Page({
       <div className="mt-4">
         <h4 className="font-normal text-2xl mb-2">
           Topics about{" "}
-          <span className="font-medium text-tertiary">
-            {searchParams?.title}
-          </span>
+          <span className="font-medium text-tertiary">{params?.title}</span>
         </h4>
       </div>
       <div className="flex mt-8">

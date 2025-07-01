@@ -17,7 +17,7 @@ import {
 import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Separator } from "./ui/separator";
 import { UserInfo } from "~/components/user-info";
 
