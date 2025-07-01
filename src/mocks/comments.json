@@ -1,0 +1,652 @@
+[
+  {
+    "id": 1,
+    "topic_id": 1,
+    "author": {
+      "id": 21,
+      "display_name": "Patricia Santos",
+      "avatar_url": "/avatars/patricia-santos.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Thank you for sharing this, Dr. Garcia. I've been dealing with scoliosis for 5 years and the multidisciplinary approach has been a game-changer for me. Physical therapy combined with swimming has helped tremendously.",
+    "likes_count": 12,
+    "created_at": "2025-06-12T11:30:00Z"
+  },
+  {
+    "id": 2,
+    "topic_id": 1,
+    "author": {
+      "id": 1,
+      "display_name": "Dr. William Garcia",
+      "avatar_url": "/avatars/william-garcia.jpg"
+    },
+    "parent_comment_id": 1,
+    "content": "Swimming is excellent for scoliosis! The buoyancy reduces spine pressure while strengthening core muscles. Which strokes have you found most helpful?",
+    "likes_count": 8,
+    "created_at": "2025-06-12T12:15:00Z"
+  },
+  {
+    "id": 3,
+    "topic_id": 1,
+    "author": {
+      "id": 21,
+      "display_name": "Patricia Santos",
+      "avatar_url": "/avatars/patricia-santos.jpg"
+    },
+    "parent_comment_id": 2,
+    "content": "Backstroke and freestyle have been my go-to. Butterfly was too intense for my lower back. I swim 3x per week now.",
+    "likes_count": 5,
+    "created_at": "2025-06-12T14:30:00Z"
+  },
+  {
+    "id": 4,
+    "topic_id": 2,
+    "author": {
+      "id": 22,
+      "display_name": "George Wilson",
+      "avatar_url": "/avatars/george-wilson.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Maria, your story resonates with me. I was diagnosed at 58. What specific exercises have you found most effective? I'm struggling to find safe strength training options.",
+    "likes_count": 7,
+    "created_at": "2025-06-11T09:45:00Z"
+  },
+  {
+    "id": 5,
+    "topic_id": 2,
+    "author": {
+      "id": 2,
+      "display_name": "Maria Silva",
+      "avatar_url": "/avatars/maria-silva.jpg"
+    },
+    "parent_comment_id": 4,
+    "content": "Hi George! I work with a physical therapist who specializes in osteoporosis. We focus on resistance bands, bodyweight exercises, and light weights with perfect form. Walking with a weighted vest has also helped. Happy to share my routine!",
+    "likes_count": 15,
+    "created_at": "2025-06-11T11:20:00Z"
+  },
+  {
+    "id": 6,
+    "topic_id": 3,
+    "author": {
+      "id": 23,
+      "display_name": "Michael Thompson",
+      "avatar_url": "/avatars/michael-thompson.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Dr. Johnson, I've been hesitant about acupuncture. Is there solid research backing its effectiveness for chronic back pain?",
+    "likes_count": 18,
+    "created_at": "2025-06-10T15:30:00Z"
+  },
+  {
+    "id": 7,
+    "topic_id": 3,
+    "author": {
+      "id": 3,
+      "display_name": "Dr. Sarah Johnson",
+      "avatar_url": "/avatars/sarah-johnson.jpg"
+    },
+    "parent_comment_id": 6,
+    "content": "Great question! Recent meta-analyses show acupuncture can be effective for chronic low back pain, especially when combined with conventional care. The key is finding a licensed practitioner experienced with back pain. I can share some peer-reviewed studies if you're interested.",
+    "likes_count": 24,
+    "created_at": "2025-06-10T16:45:00Z"
+  },
+  {
+    "id": 8,
+    "topic_id": 3,
+    "author": {
+      "id": 24,
+      "display_name": "Amy Chen",
+      "avatar_url": "/avatars/amy-chen.jpg"
+    },
+    "parent_comment_id": 7,
+    "content": "I'd love to see those studies! I've had amazing results with acupuncture after 2 failed epidurals. It took about 6 sessions to notice improvement.",
+    "likes_count": 11,
+    "created_at": "2025-06-10T18:00:00Z"
+  },
+  {
+    "id": 9,
+    "topic_id": 4,
+    "author": {
+      "id": 25,
+      "display_name": "Richard Brown",
+      "avatar_url": "/avatars/richard-brown.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Robert, your chair recommendations would be hugely helpful! I work from home and haven't found anything that doesn't aggravate my stenosis after a few hours.",
+    "likes_count": 22,
+    "created_at": "2025-06-08T10:15:00Z"
+  },
+  {
+    "id": 10,
+    "topic_id": 4,
+    "author": {
+      "id": 4,
+      "display_name": "Robert Chen",
+      "avatar_url": "/avatars/robert-chen.jpg"
+    },
+    "parent_comment_id": 9,
+    "content": "The Herman Miller Embody has been a lifesaver for me - expensive but worth it. Also, I alternate between sitting and using a height-adjustable desk. The key is changing positions frequently. I set a timer for every 30 minutes.",
+    "likes_count": 35,
+    "created_at": "2025-06-08T11:30:00Z"
+  },
+  {
+    "id": 11,
+    "topic_id": 5,
+    "author": {
+      "id": 26,
+      "display_name": "Jennifer Martinez",
+      "avatar_url": "/avatars/jennifer-martinez.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "This is eye-opening! I never connected my digestive issues with my posture. How quickly can posture improvements affect these other symptoms?",
+    "likes_count": 14,
+    "created_at": "2025-06-05T14:20:00Z"
+  },
+  {
+    "id": 12,
+    "topic_id": 6,
+    "author": {
+      "id": 27,
+      "display_name": "Frank Anderson",
+      "avatar_url": "/avatars/frank-anderson.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Linda, I'm 72 with similar issues. Do you do your exercises at home or at a gym? I'm worried about injuring myself without supervision.",
+    "likes_count": 19,
+    "created_at": "2025-06-02T09:00:00Z"
+  },
+  {
+    "id": 13,
+    "topic_id": 6,
+    "author": {
+      "id": 6,
+      "display_name": "Linda Thompson",
+      "avatar_url": "/avatars/linda-thompson.jpg"
+    },
+    "parent_comment_id": 12,
+    "content": "I started with a physical therapist for 3 months to learn proper form, then transitioned to home exercises. I still check in quarterly. Safety first at our age! I also joined a senior fitness class for accountability.",
+    "likes_count": 28,
+    "created_at": "2025-06-02T10:30:00Z"
+  },
+  {
+    "id": 14,
+    "topic_id": 7,
+    "author": {
+      "id": 28,
+      "display_name": "Diana Lee",
+      "avatar_url": "/avatars/diana-lee.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Dr. Brown, I've been told I need surgery but I'm terrified. What questions should I ask my surgeon during consultation?",
+    "likes_count": 31,
+    "created_at": "2025-05-25T13:45:00Z"
+  },
+  {
+    "id": 15,
+    "topic_id": 7,
+    "author": {
+      "id": 7,
+      "display_name": "Dr. Michael Brown",
+      "avatar_url": "/avatars/michael-brown.jpg"
+    },
+    "parent_comment_id": 14,
+    "content": "Key questions: 1) Success/complication rates for your specific condition, 2) Alternative treatments you haven't tried, 3) Recovery timeline and restrictions, 4) Surgeon's experience with your procedure, 5) What happens if you delay surgery. Always get a second opinion!",
+    "likes_count": 45,
+    "created_at": "2025-05-25T15:00:00Z"
+  },
+  {
+    "id": 16,
+    "topic_id": 8,
+    "author": {
+      "id": 29,
+      "display_name": "Steve Johnson",
+      "avatar_url": "/avatars/steve-johnson.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "My back sounds like bubble wrap sometimes! Especially in the morning. Your post made me feel less alone. Did you find any treatments that reduced the noises?",
+    "likes_count": 67,
+    "created_at": "2025-05-20T08:30:00Z"
+  },
+  {
+    "id": 17,
+    "topic_id": 9,
+    "author": {
+      "id": 30,
+      "display_name": "Rachel Taylor",
+      "avatar_url": "/avatars/rachel-taylor.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Emma, my daughter is 14 and just started bracing. How did you deal with wearing it to school? She's so self-conscious.",
+    "likes_count": 23,
+    "created_at": "2025-05-15T16:00:00Z"
+  },
+  {
+    "id": 18,
+    "topic_id": 9,
+    "author": {
+      "id": 9,
+      "display_name": "Emma Watson",
+      "avatar_url": "/avatars/emma-watson.jpg"
+    },
+    "parent_comment_id": 17,
+    "content": "The first few months were tough! I started by wearing loose clothes and gradually got more confident. Having supportive friends helped. Tell her it's temporary and so worth it - my curve hasn't progressed at all!",
+    "likes_count": 34,
+    "created_at": "2025-05-15T17:30:00Z"
+  },
+  {
+    "id": 19,
+    "topic_id": 10,
+    "author": {
+      "id": 31,
+      "display_name": "Carlos Mendez",
+      "avatar_url": "/avatars/carlos-mendez.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "This is so helpful! I've been confusing muscle spasms with nerve pain. The treatment approaches are completely different, right?",
+    "likes_count": 26,
+    "created_at": "2025-05-10T11:45:00Z"
+  },
+  {
+    "id": 20,
+    "topic_id": 11,
+    "author": {
+      "id": 32,
+      "display_name": "Nancy Davis",
+      "avatar_url": "/avatars/nancy-davis.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Dr. Hassan, are the new medications you mentioned suitable for people with osteopenia, or only full osteoporosis?",
+    "likes_count": 18,
+    "created_at": "2025-05-05T14:30:00Z"
+  },
+  {
+    "id": 21,
+    "topic_id": 11,
+    "author": {
+      "id": 11,
+      "display_name": "Dr. Ahmed Hassan",
+      "avatar_url": "/avatars/ahmed-hassan.jpg"
+    },
+    "parent_comment_id": 20,
+    "content": "Great question! Some newer medications are approved for osteopenia in high-risk patients. The decision depends on your FRAX score and other risk factors. Lifestyle interventions are still first-line for osteopenia.",
+    "likes_count": 22,
+    "created_at": "2025-05-05T16:00:00Z"
+  },
+  {
+    "id": 22,
+    "topic_id": 12,
+    "author": {
+      "id": 33,
+      "display_name": "Tom Wilson",
+      "avatar_url": "/avatars/tom-wilson.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Barbara, I have the same issue - walking helps but then suddenly makes it worse. What's your walking routine like?",
+    "likes_count": 15,
+    "created_at": "2025-05-01T10:00:00Z"
+  },
+  {
+    "id": 23,
+    "topic_id": 12,
+    "author": {
+      "id": 12,
+      "display_name": "Barbara Davis",
+      "avatar_url": "/avatars/barbara-davis.jpg"
+    },
+    "parent_comment_id": 22,
+    "content": "I do 3 short walks (15-20 min) instead of one long one. I also found that walking on soft surfaces like grass or a track is much better than concrete. Shopping carts help too - gives support without looking like a walker!",
+    "likes_count": 29,
+    "created_at": "2025-05-01T11:30:00Z"
+  },
+  {
+    "id": 24,
+    "topic_id": 13,
+    "author": {
+      "id": 34,
+      "display_name": "Lisa Chang",
+      "avatar_url": "/avatars/lisa-chang.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Your progress photos are inspiring! I'm starting my journey now. Did you experience any setbacks during those 6 months?",
+    "likes_count": 41,
+    "created_at": "2025-04-25T09:15:00Z"
+  },
+  {
+    "id": 25,
+    "topic_id": 13,
+    "author": {
+      "id": 13,
+      "display_name": "Kevin Park",
+      "avatar_url": "/avatars/kevin-park.jpg"
+    },
+    "parent_comment_id": 24,
+    "content": "Definitely! Week 3 I overdid it and had to rest for a few days. The key is consistency, not perfection. Start with just 5 minutes of exercises daily and build up slowly.",
+    "likes_count": 37,
+    "created_at": "2025-04-25T10:30:00Z"
+  },
+  {
+    "id": 26,
+    "topic_id": 14,
+    "author": {
+      "id": 35,
+      "display_name": "Robert Martinez",
+      "avatar_url": "/avatars/robert-martinez.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "My doctor just says it's age-related wear and tear. After reading this, I'm going to push for more specific testing. What tests would you recommend?",
+    "likes_count": 24,
+    "created_at": "2025-04-20T13:00:00Z"
+  },
+  {
+    "id": 27,
+    "topic_id": 15,
+    "author": {
+      "id": 36,
+      "display_name": "Sandra Kim",
+      "avatar_url": "/avatars/sandra-kim.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Thomas, I'm scheduled for the same surgery next month. Your timeline is exactly what I needed! How was the pain management in the hospital?",
+    "likes_count": 52,
+    "created_at": "2025-04-15T11:45:00Z"
+  },
+  {
+    "id": 28,
+    "topic_id": 15,
+    "author": {
+      "id": 15,
+      "display_name": "Thomas Anderson",
+      "avatar_url": "/avatars/thomas-anderson.jpg"
+    },
+    "parent_comment_id": 27,
+    "content": "First 48 hours were rough but manageable with the PCA pump. After that, oral meds worked well. Ice packs were my best friend! Don't be shy about asking for pain relief - staying ahead of the pain is crucial.",
+    "likes_count": 68,
+    "created_at": "2025-04-15T13:00:00Z"
+  },
+  {
+    "id": 29,
+    "topic_id": 16,
+    "author": {
+      "id": 37,
+      "display_name": "Mark Williams",
+      "avatar_url": "/avatars/mark-williams.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Thank you for this! I've been ignoring numbness in my legs thinking it was just sciatica. Time to see my doctor.",
+    "likes_count": 78,
+    "created_at": "2025-04-10T16:30:00Z"
+  },
+  {
+    "id": 30,
+    "topic_id": 16,
+    "author": {
+      "id": 16,
+      "display_name": "Dr. Lisa Martinez",
+      "avatar_url": "/avatars/lisa-martinez.jpg"
+    },
+    "parent_comment_id": 29,
+    "content": "Absolutely see your doctor! Progressive numbness, especially if bilateral, needs evaluation. Better safe than sorry with neurological symptoms.",
+    "likes_count": 92,
+    "created_at": "2025-04-10T17:30:00Z"
+  },
+  {
+    "id": 31,
+    "topic_id": 17,
+    "author": {
+      "id": 38,
+      "display_name": "Michelle Brown",
+      "avatar_url": "/avatars/michelle-brown.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Jennifer, I had my first baby with scoliosis last year! Happy to share my experience. The epidural placement was tricky but worked out fine.",
+    "likes_count": 44,
+    "created_at": "2025-04-05T10:00:00Z"
+  },
+  {
+    "id": 32,
+    "topic_id": 17,
+    "author": {
+      "id": 17,
+      "display_name": "Jennifer Kim",
+      "avatar_url": "/avatars/jennifer-kim.jpg"
+    },
+    "parent_comment_id": 31,
+    "content": "Oh that's so reassuring! The epidural is one of my biggest worries. Did you have a vaginal delivery? My curve is 35 degrees.",
+    "likes_count": 38,
+    "created_at": "2025-04-05T11:15:00Z"
+  },
+  {
+    "id": 33,
+    "topic_id": 18,
+    "author": {
+      "id": 39,
+      "display_name": "Paul Anderson",
+      "avatar_url": "/avatars/paul-anderson.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "What dietary changes have you seen help with inflammation? I'm willing to try anything at this point.",
+    "likes_count": 29,
+    "created_at": "2025-03-30T14:45:00Z"
+  },
+  {
+    "id": 34,
+    "topic_id": 18,
+    "author": {
+      "id": 18,
+      "display_name": "Dr. David Chang",
+      "avatar_url": "/avatars/david-chang.jpg"
+    },
+    "parent_comment_id": 33,
+    "content": "Mediterranean diet shows strong anti-inflammatory effects. Focus on omega-3 rich fish, colorful vegetables, and limiting processed foods. Turmeric and ginger have shown promise too, though effects are modest.",
+    "likes_count": 35,
+    "created_at": "2025-03-30T16:00:00Z"
+  },
+  {
+    "id": 35,
+    "topic_id": 19,
+    "author": {
+      "id": 40,
+      "display_name": "Helen Garcia",
+      "avatar_url": "/avatars/helen-garcia.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Susan, this gives me so much hope! I'm 44 with osteopenia. Can you share more about your exercise routine?",
+    "likes_count": 56,
+    "created_at": "2025-03-25T11:30:00Z"
+  },
+  {
+    "id": 36,
+    "topic_id": 19,
+    "author": {
+      "id": 19,
+      "display_name": "Susan Miller",
+      "avatar_url": "/avatars/susan-miller.jpg"
+    },
+    "parent_comment_id": 35,
+    "content": "Of course! I do weight training 3x/week focusing on compound movements, jump rope for impact loading (started very gradually!), and yoga for balance. Diet was crucial too - lots of calcium, vitamin D, and protein.",
+    "likes_count": 71,
+    "created_at": "2025-03-25T13:00:00Z"
+  },
+  {
+    "id": 37,
+    "topic_id": 20,
+    "author": {
+      "id": 41,
+      "display_name": "James Lee",
+      "avatar_url": "/avatars/james-lee.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "The pillow recommendations are gold! I've been using the same flat pillow for years. No wonder my neck hurts every morning.",
+    "likes_count": 123,
+    "created_at": "2025-03-20T08:00:00Z"
+  },
+  {
+    "id": 38,
+    "topic_id": 20,
+    "author": {
+      "id": 42,
+      "display_name": "Anna White",
+      "avatar_url": "/avatars/anna-white.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Dr. Green, what about stomach sleepers? Every guide says it's bad but I can't fall asleep any other way.",
+    "likes_count": 89,
+    "created_at": "2025-03-20T09:30:00Z"
+  },
+  {
+    "id": 39,
+    "topic_id": 20,
+    "author": {
+      "id": 20,
+      "display_name": "Dr. Rachel Green",
+      "avatar_url": "/avatars/rachel-green.jpg"
+    },
+    "parent_comment_id": 38,
+    "content": "Stomach sleeping is challenging for the spine. If you can't change, try: a very thin pillow or none at all, place a pillow under your pelvis, and try to transition to side sleeping gradually using a body pillow for comfort.",
+    "likes_count": 95,
+    "created_at": "2025-03-20T10:45:00Z"
+  },
+  {
+    "id": 40,
+    "topic_id": 1,
+    "author": {
+      "id": 43,
+      "display_name": "David Park",
+      "avatar_url": "/avatars/david-park.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "What about yoga for scoliosis? I've heard mixed opinions. Some say it helps, others worry about making curves worse.",
+    "likes_count": 16,
+    "created_at": "2025-06-12T15:00:00Z"
+  },
+  {
+    "id": 41,
+    "topic_id": 3,
+    "author": {
+      "id": 44,
+      "display_name": "Laura Martinez",
+      "avatar_url": "/avatars/laura-martinez.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "I tried mindfulness meditation for my chronic pain and was shocked how much it helped. It didn't reduce the pain itself but changed my relationship with it.",
+    "likes_count": 31,
+    "created_at": "2025-06-12T10:00:00Z"
+  },
+  {
+    "id": 42,
+    "topic_id": 3,
+    "author": {
+      "id": 45,
+      "display_name": "John Davis",
+      "avatar_url": "/avatars/john-davis.jpg"
+    },
+    "parent_comment_id": 41,
+    "content": "Same experience here! MBSR (Mindfulness-Based Stress Reduction) was a game-changer. The 8-week course was tough but worth it.",
+    "likes_count": 19,
+    "created_at": "2025-06-12T11:30:00Z"
+  },
+  {
+    "id": 43,
+    "topic_id": 5,
+    "author": {
+      "id": 5,
+      "display_name": "Dr. James Mitchell",
+      "avatar_url": "/avatars/james-mitchell.jpg"
+    },
+    "parent_comment_id": 11,
+    "content": "Breathing improvements can be noticed within days, digestive changes within 2-3 weeks. The musculoskeletal benefits take longer - usually 6-8 weeks of consistent work to see significant changes.",
+    "likes_count": 22,
+    "created_at": "2025-06-05T16:00:00Z"
+  },
+  {
+    "id": 44,
+    "topic_id": 7,
+    "author": {
+      "id": 46,
+      "display_name": "Eric Thompson",
+      "avatar_url": "/avatars/eric-thompson.jpg"
+    },
+    "parent_comment_id": 15,
+    "content": "I got 3 opinions before my surgery and I'm so glad I did. The approaches were surprisingly different. The third surgeon suggested a less invasive option that worked perfectly.",
+    "likes_count": 58,
+    "created_at": "2025-05-25T17:30:00Z"
+  },
+  {
+    "id": 45,
+    "topic_id": 8,
+    "author": {
+      "id": 8,
+      "display_name": "Carlos Rodriguez",
+      "avatar_url": "/avatars/carlos-rodriguez.jpg"
+    },
+    "parent_comment_id": 16,
+    "content": "Regular stretching and staying hydrated reduced my back noises by about 50%. Also, the noises often decreased once I was warmed up and moving for a while.",
+    "likes_count": 43,
+    "created_at": "2025-05-20T10:00:00Z"
+  },
+  {
+    "id": 46,
+    "topic_id": 10,
+    "author": {
+      "id": 10,
+      "display_name": "Dr. Patricia Lee",
+      "avatar_url": "/avatars/patricia-lee.jpg"
+    },
+    "parent_comment_id": 19,
+    "content": "Exactly! Muscle pain typically responds to heat, stretching, and massage. Nerve pain often needs different approaches like nerve glides, specific positions, and sometimes medication. The distribution pattern is also very different.",
+    "likes_count": 38,
+    "created_at": "2025-05-10T13:00:00Z"
+  },
+  {
+    "id": 47,
+    "topic_id": 14,
+    "author": {
+      "id": 14,
+      "display_name": "Dr. Nancy White",
+      "avatar_url": "/avatars/nancy-white.jpg"
+    },
+    "parent_comment_id": 26,
+    "content": "X-rays are a start, but for inflammatory arthritis, blood tests (CRP, ESR, RF, anti-CCP) and sometimes MRI are more revealing. A rheumatology referral might be appropriate if inflammatory arthritis is suspected.",
+    "likes_count": 33,
+    "created_at": "2025-04-20T15:00:00Z"
+  },
+  {
+    "id": 48,
+    "topic_id": 15,
+    "author": {
+      "id": 47,
+      "display_name": "Rebecca Chen",
+      "avatar_url": "/avatars/rebecca-chen.jpg"
+    },
+    "parent_comment_id": null,
+    "content": "Thomas, when were you able to return to work? I have a desk job and trying to plan my surgery timing.",
+    "likes_count": 41,
+    "created_at": "2025-04-16T14:00:00Z"
+  },
+  {
+    "id": 49,
+    "topic_id": 15,
+    "author": {
+      "id": 15,
+      "display_name": "Thomas Anderson",
+      "avatar_url": "/avatars/thomas-anderson.jpg"
+    },
+    "parent_comment_id": 48,
+    "content": "I worked from home part-time at 4 weeks, full-time at 6 weeks. Standing desk was essential! Some people return earlier but I didn't want to rush it. Everyone heals differently though.",
+    "likes_count": 47,
+    "created_at": "2025-04-16T15:30:00Z"
+  },
+  {
+    "id": 50,
+    "topic_id": 19,
+    "author": {
+      "id": 48,
+      "display_name": "Karen Wilson",
+      "avatar_url": "/avatars/karen-wilson.jpg"
+    },
+    "parent_comment_id": 36,
+    "content": "Did you work with a trainer familiar with osteopenia? I'm scared of getting injured with weights.",
+    "likes_count": 28,
+    "created_at": "2025-03-25T15:00:00Z"
+  }
+]

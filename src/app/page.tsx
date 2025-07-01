@@ -74,7 +74,7 @@ export default function Page() {
               key={category.id}
               href={`/categories/${category.name
                 .toLowerCase()
-                .replace("/", "-")
+                .replace("/", "")
                 .replace(/\s+/g, "-")}?title=${encodeURIComponent(
                 category.name
               )}&categoryId=${category.id}`}
