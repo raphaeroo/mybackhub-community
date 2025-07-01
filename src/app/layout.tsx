@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Open_Sans, Montserrat } from "next/font/google";
+import { Open_Sans } from "next/font/google";
+import localFont from "next/font/local";
 // import { getServerSession } from "next-auth";
 
 import "./globals.css";
@@ -10,14 +11,41 @@ import { Toaster } from "sonner";
 import { SidebarProvider } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/app-sidebar";
 
-const geistSans = Open_Sans({
-  variable: "--font-geist-sans",
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Montserrat({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const gotham = localFont({
+  src: [
+    {
+      path: "../../public/fonts/Gotham-Light.otf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/Gotham-Book.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/Gotham-Medium.otf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/Gotham-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/Gotham-Black.ttf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  variable: "--font-gotham",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -38,12 +66,12 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${openSans.variable} ${gotham.variable} antialiased font-mono`}
       >
         {/* <SessionProvider session={session}> */}
         <SidebarProvider>
           <AppSidebar />
-          <main className="md:w-screen pb-12">
+          <main className="w-full bg-gray-50">
             <QueryClientProvider>{children}</QueryClientProvider>
           </main>
         </SidebarProvider>

@@ -1,0 +1,362 @@
+[
+  {
+    "id": 1,
+    "category_id": 1,
+    "category_name": "Scoliosis",
+    "author": {
+      "id": 1,
+      "display_name": "Dr. William Garcia",
+      "avatar_url": "/avatars/william-garcia.jpg",
+      "is_specialist": true
+    },
+    "title": "Understanding the Connection and Managing the Symptoms",
+    "content": "As a specialist, I can say that managing scoliosis symptoms goes far beyond just controlling pain — it involves posture, muscle strengthening, and in some cases, multidisciplinary care. How have you been dealing with this in your daily life?",
+    "likes_count": 24,
+    "comments_count": 8,
+    "views_count": 156,
+    "last_activity_at": "2025-06-12T14:30:00Z",
+    "created_at": "2025-06-12T10:00:00Z"
+  },
+  {
+    "id": 2,
+    "category_id": 2,
+    "category_name": "Osteoporosis/Osteopenia",
+    "author": {
+      "id": 2,
+      "display_name": "Maria Silva",
+      "avatar_url": "/avatars/maria-silva.jpg",
+      "is_specialist": false
+    },
+    "title": "My Journey with Osteoporosis: From Diagnosis to Management",
+    "content": "I was diagnosed with osteoporosis 3 years ago at age 55. Since then, I've learned so much about bone health, nutrition, and exercise. I'd like to share what has worked for me and hear about your experiences too.",
+    "likes_count": 45,
+    "comments_count": 12,
+    "views_count": 289,
+    "last_activity_at": "2025-06-11T18:45:00Z",
+    "created_at": "2025-06-10T09:15:00Z"
+  },
+  {
+    "id": 3,
+    "category_id": 3,
+    "category_name": "Pain Relief",
+    "author": {
+      "id": 3,
+      "display_name": "Dr. Sarah Johnson",
+      "avatar_url": "/avatars/sarah-johnson.jpg",
+      "is_specialist": true
+    },
+    "title": "Non-Pharmacological Approaches to Chronic Back Pain",
+    "content": "While medications have their place, many patients find significant relief through alternative methods. Let's discuss evidence-based approaches including physical therapy, acupuncture, and mindfulness techniques.",
+    "likes_count": 67,
+    "comments_count": 23,
+    "views_count": 412,
+    "last_activity_at": "2025-06-12T16:20:00Z",
+    "created_at": "2025-06-08T14:30:00Z"
+  },
+  {
+    "id": 4,
+    "category_id": 4,
+    "category_name": "Stenosis",
+    "author": {
+      "id": 4,
+      "display_name": "Robert Chen",
+      "avatar_url": "/avatars/robert-chen.jpg",
+      "is_specialist": false
+    },
+    "title": "Living with Spinal Stenosis - Tips from a 10-Year Veteran",
+    "content": "After a decade of managing spinal stenosis, I've compiled my best tips for daily living. From choosing the right chair to exercises that actually help, here's what I've learned through trial and error.",
+    "likes_count": 89,
+    "comments_count": 34,
+    "views_count": 567,
+    "last_activity_at": "2025-06-12T12:00:00Z",
+    "created_at": "2025-06-05T11:20:00Z"
+  },
+  {
+    "id": 5,
+    "category_id": 5,
+    "category_name": "Posture & Kyphosis",
+    "author": {
+      "id": 5,
+      "display_name": "Dr. James Mitchell",
+      "avatar_url": "/avatars/james-mitchell.jpg",
+      "is_specialist": true
+    },
+    "title": "The Hidden Impact of Poor Posture on Overall Health",
+    "content": "Poor posture doesn't just affect your back. It can impact breathing, digestion, and even mood. Let's explore the cascade effects and discuss corrective strategies that go beyond 'sit up straight'.",
+    "likes_count": 112,
+    "comments_count": 19,
+    "views_count": 890,
+    "last_activity_at": "2025-06-12T09:30:00Z",
+    "created_at": "2025-06-01T08:00:00Z"
+  },
+  {
+    "id": 6,
+    "category_id": 6,
+    "category_name": "Aging",
+    "author": {
+      "id": 6,
+      "display_name": "Linda Thompson",
+      "avatar_url": "/avatars/linda-thompson.jpg",
+      "is_specialist": false
+    },
+    "title": "Maintaining Spine Health After 60: A Practical Guide",
+    "content": "As we age, our spines need extra care. I'm 68 and have maintained an active lifestyle despite degenerative disc disease. Here are my strategies for staying mobile and pain-free.",
+    "likes_count": 134,
+    "comments_count": 41,
+    "views_count": 1023,
+    "last_activity_at": "2025-06-12T15:45:00Z",
+    "created_at": "2025-05-28T13:30:00Z"
+  },
+  {
+    "id": 7,
+    "category_id": 7,
+    "category_name": "Surgery",
+    "author": {
+      "id": 7,
+      "display_name": "Dr. Michael Brown",
+      "avatar_url": "/avatars/michael-brown.jpg",
+      "is_specialist": true
+    },
+    "title": "When to Consider Spine Surgery: A Surgeon's Perspective",
+    "content": "Surgery should never be the first option, but sometimes it's the best option. Let's discuss the indicators, different procedures, and what to realistically expect from spine surgery.",
+    "likes_count": 78,
+    "comments_count": 56,
+    "views_count": 1234,
+    "last_activity_at": "2025-06-12T17:00:00Z",
+    "created_at": "2025-05-20T10:15:00Z"
+  },
+  {
+    "id": 8,
+    "category_id": 8,
+    "category_name": "Other Back Questions",
+    "author": {
+      "id": 8,
+      "display_name": "Carlos Rodriguez",
+      "avatar_url": "/avatars/carlos-rodriguez.jpg",
+      "is_specialist": false
+    },
+    "title": "Is This Normal? Understanding Back Noises and Sensations",
+    "content": "Does your back crack, pop, or make weird noises? I've been experiencing this for years and finally got answers. Let's demystify these common but concerning symptoms.",
+    "likes_count": 234,
+    "comments_count": 89,
+    "views_count": 2345,
+    "last_activity_at": "2025-06-12T18:30:00Z",
+    "created_at": "2025-05-15T16:45:00Z"
+  },
+  {
+    "id": 9,
+    "category_id": 1,
+    "category_name": "Scoliosis",
+    "author": {
+      "id": 9,
+      "display_name": "Emma Watson",
+      "avatar_url": "/avatars/emma-watson.jpg",
+      "is_specialist": false
+    },
+    "title": "Teen with Scoliosis: My Bracing Experience",
+    "content": "I'm 16 and have been wearing a back brace for 2 years. It's been challenging but I've learned so much. Sharing my story for other teens going through this.",
+    "likes_count": 156,
+    "comments_count": 67,
+    "views_count": 1678,
+    "last_activity_at": "2025-06-12T14:15:00Z",
+    "created_at": "2025-05-10T12:30:00Z"
+  },
+  {
+    "id": 10,
+    "category_id": 3,
+    "category_name": "Pain Relief",
+    "author": {
+      "id": 10,
+      "display_name": "Dr. Patricia Lee",
+      "avatar_url": "/avatars/patricia-lee.jpg",
+      "is_specialist": true
+    },
+    "title": "Understanding Pain Signals: What Your Body Is Trying to Tell You",
+    "content": "Not all back pain is created equal. Learning to differentiate between muscle strain, nerve pain, and structural issues can help you seek appropriate treatment faster.",
+    "likes_count": 198,
+    "comments_count": 43,
+    "views_count": 2567,
+    "last_activity_at": "2025-06-12T11:00:00Z",
+    "created_at": "2025-05-05T09:00:00Z"
+  },
+  {
+    "id": 11,
+    "category_id": 2,
+    "category_name": "Osteoporosis/Osteopenia",
+    "author": {
+      "id": 11,
+      "display_name": "Dr. Ahmed Hassan",
+      "avatar_url": "/avatars/ahmed-hassan.jpg",
+      "is_specialist": true
+    },
+    "title": "Latest Research on Osteoporosis Prevention and Treatment",
+    "content": "Exciting developments in osteoporosis research are changing how we approach bone health. From new medications to lifestyle interventions, here's what the latest studies show.",
+    "likes_count": 145,
+    "comments_count": 28,
+    "views_count": 1890,
+    "last_activity_at": "2025-06-12T13:45:00Z",
+    "created_at": "2025-04-30T14:20:00Z"
+  },
+  {
+    "id": 12,
+    "category_id": 4,
+    "category_name": "Stenosis",
+    "author": {
+      "id": 12,
+      "display_name": "Barbara Davis",
+      "avatar_url": "/avatars/barbara-davis.jpg",
+      "is_specialist": false
+    },
+    "title": "Walking with Stenosis: Finding the Right Balance",
+    "content": "Walking is both the best and worst thing for my stenosis. I've developed a system that lets me stay active without triggering symptoms. Here's my approach.",
+    "likes_count": 167,
+    "comments_count": 52,
+    "views_count": 2234,
+    "last_activity_at": "2025-06-12T16:30:00Z",
+    "created_at": "2025-04-25T11:45:00Z"
+  },
+  {
+    "id": 13,
+    "category_id": 5,
+    "category_name": "Posture & Kyphosis",
+    "author": {
+      "id": 13,
+      "display_name": "Kevin Park",
+      "avatar_url": "/avatars/kevin-park.jpg",
+      "is_specialist": false
+    },
+    "title": "From Desk Job to Better Posture: My 6-Month Transformation",
+    "content": "Working from home destroyed my posture. Here's how I rebuilt it with specific exercises, ergonomic changes, and daily habits. Progress photos included!",
+    "likes_count": 289,
+    "comments_count": 76,
+    "views_count": 3456,
+    "last_activity_at": "2025-06-12T10:15:00Z",
+    "created_at": "2025-04-20T08:30:00Z"
+  },
+  {
+    "id": 14,
+    "category_id": 6,
+    "category_name": "Aging",
+    "author": {
+      "id": 14,
+      "display_name": "Dr. Nancy White",
+      "avatar_url": "/avatars/nancy-white.jpg",
+      "is_specialist": true
+    },
+    "title": "Arthritis vs Normal Aging: Know the Difference",
+    "content": "Many patients assume their back pain is 'just aging', but sometimes it's treatable arthritis. Let's discuss the key differences and when to seek help.",
+    "likes_count": 212,
+    "comments_count": 38,
+    "views_count": 2789,
+    "last_activity_at": "2025-06-12T12:45:00Z",
+    "created_at": "2025-04-15T15:00:00Z"
+  },
+  {
+    "id": 15,
+    "category_id": 7,
+    "category_name": "Surgery",
+    "author": {
+      "id": 15,
+      "display_name": "Thomas Anderson",
+      "avatar_url": "/avatars/thomas-anderson.jpg",
+      "is_specialist": false
+    },
+    "title": "6 Months Post Fusion Surgery: The Good, Bad, and Unexpected",
+    "content": "Had L4-L5 fusion in December. Recovery has been a rollercoaster. Sharing my detailed timeline, what helped, what didn't, and advice for anyone facing this surgery.",
+    "likes_count": 345,
+    "comments_count": 124,
+    "views_count": 4567,
+    "last_activity_at": "2025-06-12T19:00:00Z",
+    "created_at": "2025-04-10T10:30:00Z"
+  },
+  {
+    "id": 16,
+    "category_id": 8,
+    "category_name": "Other Back Questions",
+    "author": {
+      "id": 16,
+      "display_name": "Dr. Lisa Martinez",
+      "avatar_url": "/avatars/lisa-martinez.jpg",
+      "is_specialist": true
+    },
+    "title": "Back Pain Red Flags: When to See a Doctor Immediately",
+    "content": "Most back pain isn't serious, but some symptoms require urgent attention. Here's a comprehensive guide to red flags that shouldn't be ignored.",
+    "likes_count": 456,
+    "comments_count": 67,
+    "views_count": 5678,
+    "last_activity_at": "2025-06-12T17:30:00Z",
+    "created_at": "2025-04-05T13:15:00Z"
+  },
+  {
+    "id": 17,
+    "category_id": 1,
+    "category_name": "Scoliosis",
+    "author": {
+      "id": 17,
+      "display_name": "Jennifer Kim",
+      "avatar_url": "/avatars/jennifer-kim.jpg",
+      "is_specialist": false
+    },
+    "title": "Pregnancy with Scoliosis: What I Wish I'd Known",
+    "content": "Currently 7 months pregnant with moderate scoliosis. Sharing my experience with pain management, finding the right doctors, and preparing for delivery.",
+    "likes_count": 234,
+    "comments_count": 91,
+    "views_count": 3123,
+    "last_activity_at": "2025-06-12T15:00:00Z",
+    "created_at": "2025-03-30T16:45:00Z"
+  },
+  {
+    "id": 18,
+    "category_id": 3,
+    "category_name": "Pain Relief",
+    "author": {
+      "id": 18,
+      "display_name": "Dr. David Chang",
+      "avatar_url": "/avatars/david-chang.jpg",
+      "is_specialist": true
+    },
+    "title": "The Role of Inflammation in Chronic Back Pain",
+    "content": "New research shows inflammation plays a bigger role in back pain than previously thought. Let's explore anti-inflammatory approaches beyond just NSAIDs.",
+    "likes_count": 178,
+    "comments_count": 31,
+    "views_count": 2345,
+    "last_activity_at": "2025-06-12T11:30:00Z",
+    "created_at": "2025-03-25T09:30:00Z"
+  },
+  {
+    "id": 19,
+    "category_id": 2,
+    "category_name": "Osteoporosis/Osteopenia",
+    "author": {
+      "id": 19,
+      "display_name": "Susan Miller",
+      "avatar_url": "/avatars/susan-miller.jpg",
+      "is_specialist": false
+    },
+    "title": "Building Bone Density at 45: My Success Story",
+    "content": "Diagnosed with osteopenia at 42, I've actually improved my bone density through targeted exercise and nutrition. Here's my detailed plan and DEXA scan results.",
+    "likes_count": 312,
+    "comments_count": 84,
+    "views_count": 4123,
+    "last_activity_at": "2025-06-12T14:45:00Z",
+    "created_at": "2025-03-20T12:00:00Z"
+  },
+  {
+    "id": 20,
+    "category_name": "Other Back Questions",
+    "category_id": 8,
+    "author": {
+      "id": 20,
+      "display_name": "Dr. Rachel Green",
+      "avatar_url": "/avatars/rachel-green.jpg",
+      "is_specialist": true
+    },
+    "title": "Sleep Positions for Back Pain: A Physical Therapist's Guide",
+    "content": "How you sleep can make or break your back health. Here's a detailed guide to optimal sleep positions for different types of back conditions, plus pillow recommendations.",
+    "likes_count": 567,
+    "comments_count": 143,
+    "views_count": 6789,
+    "last_activity_at": "2025-06-12T20:00:00Z",
+    "created_at": "2025-03-15T07:45:00Z"
+  }
+]

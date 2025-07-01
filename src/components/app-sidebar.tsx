@@ -1,12 +1,5 @@
 "use client";
-import {
-  Home,
-  BookUser,
-  Lock,
-  LogOut,
-  CreditCard,
-  LayoutGrid,
-} from "lucide-react";
+import { Home, BookUser, LogOut, Edit, Bookmark } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
   Sidebar,
@@ -14,6 +7,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -24,33 +18,33 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import { Separator } from "./ui/separator";
+import { UserInfo } from "~/components/user-info";
 
 // Menu items.
 const items = [
   {
-    title: "Start",
+    title: "Categories",
     url: "/",
     icon: Home,
   },
   {
-    title: "Personal Information",
-    url: "/personal-info",
+    title: "My Topics",
+    url: "/my-topics",
+    icon: Edit,
+  },
+  {
+    title: "Saved Topics",
+    url: "/saved-topics",
+    icon: Bookmark,
+  },
+];
+
+const moreApps = [
+  {
+    title: "Account",
+    url: "https://account.mybackhub.com/",
     icon: BookUser,
-  },
-  {
-    title: "Connected Applications",
-    url: "/connected-applications",
-    icon: LayoutGrid,
-  },
-  {
-    title: "Security",
-    url: "/security",
-    icon: Lock,
-  },
-  {
-    title: "Payments and Subscriptions",
-    url: "/payments-and-subscriptions",
-    icon: CreditCard,
   },
 ];
 
@@ -64,26 +58,32 @@ export function AppSidebar() {
   // }
 
   return (
-    <Sidebar variant="inset" collapsible="icon">
-      <SidebarHeader>
-        <div className="flex items-center md:mb-6 md:pt-2">
+    <Sidebar
+      variant="inset"
+      collapsible="icon"
+      className="border-r p-o m-0 bg-white"
+    >
+      <SidebarHeader className="items-center justify-center p-o m-0 bg-white">
+        <div className="flex justify-center items-center">
           {open ? (
             <Image src="/mbh-logo.png" alt="Logo" width={179} height={32} />
           ) : (
             <Image src="/mbh-logo-icon.png" alt="Logo" width={24} height={24} />
           )}
         </div>
+        <Separator />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="bg-white">
         <SidebarGroup>
-          <SidebarGroupContent>
+          <SidebarGroupLabel>Community</SidebarGroupLabel>
+          <SidebarGroupContent className="p-o m-0">
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
                     isActive={item.url === pathname}
-                    className="data-[active=true]:bg-color-blue-600!"
+                    className="data-[active=true]:bg-primary! data-[active=true]:text-white!"
                   >
                     <Link href={item.url} passHref>
                       <item.icon />
@@ -95,18 +95,39 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <SidebarGroup className="mt-6">
+          <SidebarGroupLabel>More Apps</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {moreApps.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={item.url === pathname}
+                    className="data-[active=true]:bg-color-blue-600!"
+                  >
+                    <a href={item.url} target="_self" rel="noopener noreferrer">
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenuButton asChild>
-          <Button
-            variant="ghost"
-            className="w-full justify-start"
-            onClick={() => signOut()}
-          >
-            <LogOut className="text-red-600" />
-            <span className="text-red-600">Logout</span>
+      <SidebarFooter className="bg-white">
+        <div className="w-full flex items-center justify-center">
+          <UserInfo />
+        </div>
+        <Separator />
+        <div className="m-2 w-full flex items-center justify-center">
+          <Button variant="outline" onClick={() => signOut()}>
+            <LogOut />
+            <span>Logout</span>
           </Button>
-        </SidebarMenuButton>
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
