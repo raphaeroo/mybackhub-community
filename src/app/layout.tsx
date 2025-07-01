@@ -8,7 +8,7 @@ import "./globals.css";
 // import SessionProvider from "~/providers/SessionProvider";
 import QueryClientProvider from "~/providers/QueryProvider";
 import { Toaster } from "sonner";
-import { SidebarProvider } from "~/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/app-sidebar";
 
 const openSans = Open_Sans({
@@ -72,6 +72,7 @@ export default async function RootLayout({
         <SidebarProvider>
           <AppSidebar />
           <main className="w-full bg-gray-50">
+            <SidebarTrigger />
             <QueryClientProvider>{children}</QueryClientProvider>
           </main>
         </SidebarProvider>

@@ -11,7 +11,7 @@ const categories = [
   },
   {
     id: "2",
-    name: "Osteoporosis/Osteopenia",
+    name: "Osteoporosis / Osteopenia",
     description: null,
     pictureUrl: "/placeholder-image.png",
   },

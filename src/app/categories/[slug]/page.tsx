@@ -31,7 +31,11 @@ import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 
 type CategoryParams = { slug: string };
 
-export async function generateMetadata({ params }: { params: Promise<CategoryParams> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<CategoryParams>;
+}) {
   const { slug } = await params;
   return {
     title: `MyBackHub Community | Category: ${slug}`,
@@ -80,10 +84,14 @@ export default async function Page({
           <span className="font-medium text-tertiary">{params?.title}</span>
         </h4>
       </div>
-      <div className="flex mt-8">
-        <div className="flex-7 border-r border-gray-200 pr-4">
-          <Tabs defaultValue="all" className="w-full bg-transparent pb-0 gap-0">
-            <TabsList className="bg-transparent pb-0">
+      <div className="flex flex-col md:flex-row mt-8">
+        <div className="flex-7 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pr-4">
+          <Tabs
+            defaultValue="all"
+            className="w-full bg-transparent pb-0 gap-0"
+          >
+            <div className="overflow-x-scroll md:overflow-x-visible scrollbar-hide">
+              <TabsList className="bg-transparent pb-0 flex w-max md:w-full whitespace-nowrap scrollbar-hide">
               <TabsTrigger
                 value="all"
                 className="min-w-[160px] bg-transparent rounded-none border-transparent shadow-none data-[state=active]:bg-transparent  data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-b-primary data-[state=active]:text-primary"
@@ -107,7 +115,8 @@ export default async function Page({
                 <FolderOpen className="h-4 w-4" />
                 My topics
               </TabsTrigger>
-            </TabsList>
+              </TabsList>
+            </div>
             <div className="border-b border-gray-200 w-full mb-6" />
             <TabsContent value="all">
               <div className="gap-4 flex flex-col min-h-[400px]">
@@ -131,32 +140,40 @@ export default async function Page({
                         </Button>
                       </div>
                     </div>
-                    <CardFooter className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-8 h-8">
-                          <AvatarFallback className="font-medium">
-                            {topic.author.display_name[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <p className="font-medium">
-                          {topic.author.display_name}
-                        </p>
-                        <DotIcon className="text-gray-300" />
-                        <p className="text-xs text-gray-500">
-                          {dayjs(topic.created_at).format("MM/DD/YYYY")}
-                        </p>
-                        <DotIcon className="text-gray-300" />
-                        <p className="text-xs text-gray-500">
-                          Last Activity at{" "}
-                          {dayjs().diff(dayjs(topic.last_activity_at), "days") >
-                          0
-                            ? dayjs(topic.last_activity_at).format("MM/DD/YYYY")
-                            : `${dayjs(topic.last_activity_at).format(
-                                "HH:mm"
-                              )} ago`}
-                        </p>
+                    <CardFooter className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-center pt-2">
+                      <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
+                        <div className="flex items-center gap-2 mb-2 md:mb-0">
+                          <Avatar className="w-8 h-8">
+                            <AvatarFallback className="font-medium">
+                              {topic.author.display_name[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <p className="font-medium">
+                            {topic.author.display_name}
+                          </p>
+                        </div>
+                        <div className="flex items-center md:items-center gap-2 text-xs text-gray-500">
+                          <DotIcon className="text-gray-300 hidden md:block" />
+                          <p className="text-xs text-gray-500">
+                            {dayjs(topic.created_at).format("MM/DD/YYYY")}
+                          </p>
+                          <DotIcon className="text-gray-300" />
+                          <p className="text-xs text-gray-500">
+                            Last Activity at{" "}
+                            {dayjs().diff(
+                              dayjs(topic.last_activity_at),
+                              "days"
+                            ) > 0
+                              ? dayjs(topic.last_activity_at).format(
+                                  "MM/DD/YYYY"
+                                )
+                              : `${dayjs(topic.last_activity_at).format(
+                                  "HH:mm"
+                                )} ago`}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4 font-medium">
+                      <div className="flex items-center gap-4 font-medium mt-4 md:mt-0">
                         <div className="flex items-center">
                           <ThumbsUpIcon className="h-4 w-4" />
                           <span className="ml-1 text-xs">
@@ -179,7 +196,7 @@ export default async function Page({
             <TabsContent value="my">My Topics</TabsContent>
           </Tabs>
         </div>
-        <div className="flex-2 pl-4">
+        <div className="flex-2 pt-4 md:pl-4">
           <p>right side soon</p>
         </div>
       </div>
