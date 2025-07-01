@@ -62,7 +62,7 @@ export default async function Page({
   });
 
   return (
-    <section className="pt-8 px-8">
+    <section className="p-8">
       <div>
         <Breadcrumb>
           <BreadcrumbList>

@@ -55,7 +55,7 @@ const categories = [
 
 export default function Page() {
   return (
-    <section className="pt-8 px-8">
+    <section className="p-8">
       <div>
         <h4 className="text-2xl font-medium mb-2">
           Hi Raphael. Welcome to our Community!
