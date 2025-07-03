@@ -86,7 +86,7 @@ export default function Page() {
                     height={60}
                     src={category.pictureUrl}
                     alt={category.name}
-                    className="w-[90px] h-[60px] rounded-full mb-2 group-hover:translate-y-[-2px] transition-translate"
+                    className="w-[90px] h-[60px] rounded-full mb-2 group-hover:translate-y-[-5px] transition-transform"
                   />
                   <h3 className="text-lg font-medium ml-4">{category.name}</h3>
                   {category.description && (
