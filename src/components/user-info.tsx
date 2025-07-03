@@ -10,7 +10,7 @@ export function UserInfo() {
   // }
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-start space-x-2">
       <Avatar className="w-10 h-10">
         <AvatarFallback className="font-semibold">
           {/* {session.user?.name && session.user.name[0]} */}

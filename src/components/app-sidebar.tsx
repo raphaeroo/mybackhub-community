@@ -60,10 +60,9 @@ export function AppSidebar() {
   return (
     <Sidebar
       variant="inset"
-      collapsible="icon"
-      className="border-r p-o m-0 bg-white"
+      className="border-r m-0 bg-white"
     >
-      <SidebarHeader className="items-center justify-center p-o m-0 bg-white">
+      <SidebarHeader className="items-center justify-center py-4 bg-white">
         <div className="flex justify-center items-center">
           {open ? (
             <Image src="/mbh-logo.png" alt="Logo" width={179} height={32} />
@@ -71,8 +70,8 @@ export function AppSidebar() {
             <Image src="/mbh-logo-icon.png" alt="Logo" width={24} height={24} />
           )}
         </div>
-        <Separator />
       </SidebarHeader>
+      <Separator />
       <SidebarContent className="bg-white">
         <SidebarGroup>
           <SidebarGroupLabel>Community</SidebarGroupLabel>
@@ -118,15 +117,20 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="bg-white">
-        <div className="w-full flex items-center justify-center">
+        <div className="w-full flex items-start justify-start px-2">
           <UserInfo />
         </div>
-        <Separator />
-        <div className="m-2 w-full flex items-center justify-center">
-          <Button variant="outline" onClick={() => signOut()}>
-            <LogOut />
-            <span>Logout</span>
-          </Button>
+        <Separator className="my-2" />
+        <div className="px-16 mb-4">
+          <SidebarMenuButton
+            asChild
+            className="flex items-start justify-center"
+          >
+            <Button variant="outline" onClick={() => signOut()}>
+              <LogOut />
+              <span>Logout</span>
+            </Button>
+          </SidebarMenuButton>
         </div>
       </SidebarFooter>
     </Sidebar>
