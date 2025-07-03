@@ -7,49 +7,49 @@ const categories = [
     id: "1",
     name: "Scoliosis",
     description: null,
-    pictureUrl: "/placeholder-image.png",
+    pictureUrl: "/scoliosis-pic.png",
   },
   {
     id: "2",
     name: "Osteoporosis / Osteopenia",
     description: null,
-    pictureUrl: "/placeholder-image.png",
+    pictureUrl: "/osteoporosis-pic.png",
   },
   {
     id: "3",
     name: "Pain Relief",
     description: null,
-    pictureUrl: "/placeholder-image.png",
+    pictureUrl: "/pain-relief-pic.png",
   },
   {
     id: "4",
     name: "Stenosis",
     description: null,
-    pictureUrl: "/placeholder-image.png",
+    pictureUrl: "/stenosis-pic.png",
   },
   {
     id: "5",
     name: "Posture & Kyphosis",
     description: null,
-    pictureUrl: "/placeholder-image.png",
+    pictureUrl: "/posture-pic.png",
   },
   {
     id: "6",
     name: "Aging",
     description: null,
-    pictureUrl: "/placeholder-image.png",
+    pictureUrl: "/aging-pic.png",
   },
   {
     id: "7",
     name: "Surgery",
     description: null,
-    pictureUrl: "/placeholder-image.png",
+    pictureUrl: "/surgery-pic.png",
   },
   {
     id: "8",
     name: "Other Back Questions",
     description: null,
-    pictureUrl: "/placeholder-image.png",
+    pictureUrl: "/back-question-pic.png",
   },
 ];
 
@@ -79,14 +79,14 @@ export default function Page() {
                 category.name
               )}&categoryId=${category.id}`}
             >
-              <Card className="hover:shadow-lg transition-shadow">
+              <Card className="hover:shadow-lg transition-shadow group">
                 <CardHeader className="flex items-center">
                   <Image
-                    width={96}
-                    height={96}
+                    width={90}
+                    height={60}
                     src={category.pictureUrl}
                     alt={category.name}
-                    className="w-24 h-24 rounded-full mb-2"
+                    className="w-[90px] h-[60px] rounded-full mb-2 group-hover:translate-y-[-2px] transition-translate"
                   />
                   <h3 className="text-lg font-medium ml-4">{category.name}</h3>
                   {category.description && (

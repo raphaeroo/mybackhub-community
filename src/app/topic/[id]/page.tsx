@@ -223,7 +223,7 @@ export default async function Page({
         <Avatar className="w-10 h-10">
           <AvatarFallback className="font-medium">R</AvatarFallback>
         </Avatar>
-        <Input />
+        <Input className="w-full" />
         <Button>Post</Button>
       </div>
       <Separator />
