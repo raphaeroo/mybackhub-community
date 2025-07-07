@@ -152,13 +152,40 @@ export default async function Page({
     );
   };
 
+  const adjustFromName = (from: string | undefined) => {
+    if (!from) return "Home";
+    const parts = from.split("/");
+    const name = parts.length > 1 ? parts[1][0].toUpperCase() + parts[1].slice(1) : "Home";
+
+    if (name.includes("-")) {
+      return name
+        .split("-")
+        .map((part) => part[0].toUpperCase() + part.slice(1))
+        .join(" ");
+    }
+    
+    return name;
+  }
+
+  const adjustFromRoot = (from: string | undefined) => {
+    if (!from) return "/";
+    const parts = from.split("/");
+    const root  = parts.length > 1 ? `/${parts[1]}` : "/";
+
+    if (root.includes('categories')) {
+      return '/'
+    }
+
+    return root;
+  }
+
   return (
     <section className="p-8">
       <div>
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Categories</BreadcrumbLink>
+              <BreadcrumbLink href={adjustFromRoot(from)}>{adjustFromName(from)}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
