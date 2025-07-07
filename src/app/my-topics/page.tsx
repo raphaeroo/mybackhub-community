@@ -43,7 +43,7 @@ enum CategoryOrder {
   MostComments = "most_comments",
 }
 
-export default function Page() {
+function MyTopicsContent() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -74,8 +74,7 @@ export default function Page() {
   };
 
   return (
-    <Suspense>
-      <section className="p-8">
+    <section className="p-8">
         <h4 className="font-medium text-2xl mb-2">My Topics</h4>
         <span className="font-normal text-tertiary">
           Create, edit, and keep track of your community topics with ease.
@@ -260,6 +259,13 @@ export default function Page() {
           </div>
         </div>
       </section>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <MyTopicsContent />
     </Suspense>
   );
 }

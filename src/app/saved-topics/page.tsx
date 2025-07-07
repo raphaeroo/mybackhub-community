@@ -42,7 +42,7 @@ enum CategoryOrder {
   MostComments = "most_comments",
 }
 
-export default function Page() {
+function SavedTopicsContent() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -73,8 +73,7 @@ export default function Page() {
   };
 
   return (
-    <Suspense>
-      <section className="p-8">
+    <section className="p-8">
         <h4 className="font-medium text-2xl mb-2">Saved Topics</h4>
         <span className="font-normal text-tertiary">
           Save the topics you are most interested in and access them anytime you
@@ -255,6 +254,13 @@ export default function Page() {
           </div>
         </div>
       </section>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <SavedTopicsContent />
     </Suspense>
   );
 }
