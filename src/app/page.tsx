@@ -2,56 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card, CardHeader } from "~/components/ui/card";
 
-const categories = [
-  {
-    id: "1",
-    name: "Scoliosis",
-    description: null,
-    pictureUrl: "/scoliosis-pic.png",
-  },
-  {
-    id: "2",
-    name: "Osteoporosis / Osteopenia",
-    description: null,
-    pictureUrl: "/osteoporosis-pic.png",
-  },
-  {
-    id: "3",
-    name: "Pain Relief",
-    description: null,
-    pictureUrl: "/pain-relief-pic.png",
-  },
-  {
-    id: "4",
-    name: "Stenosis",
-    description: null,
-    pictureUrl: "/stenosis-pic.png",
-  },
-  {
-    id: "5",
-    name: "Posture & Kyphosis",
-    description: null,
-    pictureUrl: "/posture-pic.png",
-  },
-  {
-    id: "6",
-    name: "Aging",
-    description: null,
-    pictureUrl: "/aging-pic.png",
-  },
-  {
-    id: "7",
-    name: "Surgery",
-    description: null,
-    pictureUrl: "/surgery-pic.png",
-  },
-  {
-    id: "8",
-    name: "Other Back Questions",
-    description: null,
-    pictureUrl: "/back-question-pic.png",
-  },
-];
+import categories from "~/mocks/categories.json";
 
 export default function Page() {
   return (
