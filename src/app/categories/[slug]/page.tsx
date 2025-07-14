@@ -9,6 +9,7 @@ import {
   SearchIcon,
   PlusIcon,
   CheckIcon,
+  ClipboardListIcon,
 } from "lucide-react";
 import dayjs from "dayjs";
 import {
@@ -33,14 +34,10 @@ import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import Link from "next/link";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
+import { CategoryOrder } from "~/constants";
+import { Badge } from "~/components/ui/badge";
 
 type Topic = (typeof topicsMock)[0];
-
-enum CategoryOrder {
-  LastActivities = "last_activities",
-  MostRecent = "most_recent",
-  MostComments = "most_comments",
-}
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -148,15 +145,9 @@ export default function Page() {
                           {dayjs(topic.created_at).format("MM/DD/YYYY")}
                         </p>
                         <DotIcon className="text-gray-300" />
-                        <p className="text-xs text-gray-500">
-                          Last Activity at{" "}
-                          {dayjs().diff(dayjs(topic.last_activity_at), "days") >
-                          0
-                            ? dayjs(topic.last_activity_at).format("MM/DD/YYYY")
-                            : `${dayjs(topic.last_activity_at).format(
-                                "HH:mm"
-                              )} ago`}
-                        </p>
+                        <Badge variant="outline">
+                          <ClipboardListIcon /> {topic.category_name}
+                        </Badge>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 font-medium mt-4 md:mt-0">
@@ -190,18 +181,6 @@ export default function Page() {
             <Button
               className="justify-between"
               variant={
-                categoryOrder === CategoryOrder.LastActivities
-                  ? "default"
-                  : "outline"
-              }
-              onClick={() => handleOrderChange(CategoryOrder.LastActivities)}
-            >
-              Last activities
-              {categoryOrder === CategoryOrder.LastActivities && <CheckIcon />}
-            </Button>
-            <Button
-              className="justify-between"
-              variant={
                 categoryOrder === CategoryOrder.MostRecent
                   ? "default"
                   : "outline"
@@ -210,6 +189,18 @@ export default function Page() {
             >
               Most recent
               {categoryOrder === CategoryOrder.MostRecent && <CheckIcon />}
+            </Button>
+            <Button
+              className="justify-between"
+              variant={
+                categoryOrder === CategoryOrder.MostLiked
+                  ? "default"
+                  : "outline"
+              }
+              onClick={() => handleOrderChange(CategoryOrder.MostLiked)}
+            >
+              Most Liked
+              {categoryOrder === CategoryOrder.MostLiked && <CheckIcon />}
             </Button>
             <Button
               className="justify-between"

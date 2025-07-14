@@ -1,5 +1,5 @@
 "use client";
-import { Home, BookUser, LogOut, Edit, Bookmark } from "lucide-react";
+import { Home, LogOut, Edit, Bookmark, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
   Sidebar,
@@ -20,6 +20,7 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { Separator } from "./ui/separator";
 import { UserInfo } from "~/components/user-info";
+import { useActive } from "~/Contexts/activeContext";
 
 // Menu items.
 const items = [
@@ -29,14 +30,14 @@ const items = [
     icon: Home,
   },
   {
-    title: "My Topics",
-    url: "/my-topics",
-    icon: Edit,
-  },
-  {
     title: "Saved Topics",
     url: "/saved-topics",
     icon: Bookmark,
+  },
+  {
+    title: "My Topics",
+    url: "/my-topics",
+    icon: Edit,
   },
 ];
 
@@ -44,7 +45,7 @@ const moreApps = [
   {
     title: "Account",
     url: "https://account.mybackhub.com/",
-    icon: BookUser,
+    icon: User,
   },
 ];
 
@@ -52,16 +53,14 @@ export function AppSidebar() {
   const pathname = usePathname();
   // const { status } = useSession();
   const { open } = useSidebar();
+  const { activeName, setActiveName } = useActive();
 
   // if (status !== "authenticated") {
   //   return null; // Don't render sidebar if not authenticated
   // }
 
   return (
-    <Sidebar
-      variant="inset"
-      className="border-r m-0 bg-white"
-    >
+    <Sidebar variant="inset" className="border-r m-0 bg-white">
       <SidebarHeader className="items-center justify-center py-4 bg-white">
         <div className="flex justify-center items-center">
           {open ? (
@@ -81,7 +80,8 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={item.url === pathname}
+                    onClick={() => setActiveName(item.title)}
+                    isActive={activeName === item.title}
                     className="data-[active=true]:bg-primary! data-[active=true]:text-white!"
                   >
                     <Link href={item.url} passHref>

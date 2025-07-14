@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import localFont from "next/font/local";
+import { Toaster } from "sonner";
 // import { getServerSession } from "next-auth";
 
 import "./globals.css";
 
 // import SessionProvider from "~/providers/SessionProvider";
 import QueryClientProvider from "~/providers/QueryProvider";
-import { Toaster } from "sonner";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/app-sidebar";
+import { ActiveProvider } from "~/Contexts/activeContext";
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -70,7 +71,9 @@ export default async function RootLayout({
       >
         {/* <SessionProvider session={session}> */}
         <SidebarProvider>
-          <AppSidebar />
+          <ActiveProvider>
+            <AppSidebar />
+          </ActiveProvider>
           <main className="w-full bg-gray-50">
             <SidebarTrigger />
             <QueryClientProvider>{children}</QueryClientProvider>
