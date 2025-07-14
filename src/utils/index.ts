@@ -1,4 +1,5 @@
-import { useCallback } from "react";
+import { LexicalEditor } from "lexical";
+import { createRef, useCallback } from "react";
 
 export const useQueryString = () => {
   const createQueryString = useCallback((name: string, value: string) => {
@@ -9,3 +10,5 @@ export const useQueryString = () => {
 
   return { createQueryString };
 };
+
+export const editorRef = createRef<LexicalEditor | null>();

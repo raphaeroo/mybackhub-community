@@ -8,9 +8,9 @@ import {
 import { $getSelection, $isRangeSelection, BaseSelection } from "lexical"
 import { PaintBucketIcon } from "lucide-react"
 
-import { useToolbarContext } from "/editor/context/toolbar-context"
-import { useUpdateToolbarHandler } from "/editor/editor-hooks/use-update-toolbar"
-import ColorPicker from "/editor/editor-ui/colorpicker"
+import { useToolbarContext } from "../../../editor/context/toolbar-context"
+import { useUpdateToolbarHandler } from "../../../editor/editor-hooks/use-update-toolbar"
+import ColorPicker from "../../../editor/editor-ui/colorpicker"
 
 export function FontBackgroundToolbarPlugin() {
   const { activeEditor } = useToolbarContext()

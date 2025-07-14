@@ -5,14 +5,16 @@ import {
   LexicalComposer,
 } from "@lexical/react/LexicalComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { EditorState, SerializedEditorState } from "lexical";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { EditorState, SerializedEditorState, LexicalEditor } from "lexical";
+import { useEffect } from "react";
 
 import { editorTheme } from "../../editor/themes/editor-theme";
 import { TooltipProvider } from "../../ui/tooltip";
-import { FloatingLinkContext } from "../../editor/context/floating-link-context";
 
 import { nodes } from "./nodes";
 import { Plugins } from "./plugins";
+import { FloatingLinkContext } from "../../editor/context/floating-link-context";
 
 const editorConfig: InitialConfigType = {
   namespace: "Editor",
@@ -23,19 +25,32 @@ const editorConfig: InitialConfigType = {
   },
 };
 
+function EditorRefPlugin({ editorRef }: { editorRef: React.MutableRefObject<LexicalEditor | null> }) {
+  const [editor] = useLexicalComposerContext();
+  
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor, editorRef]);
+  
+  return null;
+}
+
+
 export function Editor({
   editorState,
   editorSerializedState,
   onChange,
   onSerializedChange,
+  editorRef,
 }: {
   editorState?: EditorState;
   editorSerializedState?: SerializedEditorState;
   onChange?: (editorState: EditorState) => void;
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
+  editorRef?: React.MutableRefObject<LexicalEditor | null>;
 }) {
   return (
-    <div className="bg-background overflow-hidden rounded-lg border shadow">
+    <div className="bg-background overflow-hidden rounded-lg border shadow min-h-[300px]">
       <LexicalComposer
         initialConfig={{
           ...editorConfig,
@@ -48,6 +63,7 @@ export function Editor({
         <TooltipProvider>
           <FloatingLinkContext>
             <Plugins />
+            {editorRef && <EditorRefPlugin editorRef={editorRef} />}
           </FloatingLinkContext>
           <OnChangePlugin
             ignoreSelectionChange={true}

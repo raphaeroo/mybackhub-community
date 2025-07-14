@@ -40,7 +40,8 @@ export class EmojiNode extends TextNode {
   }
 
   updateDOM(
-    prevNode: TextNode,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    prevNode: any,
     dom: HTMLElement,
     config: EditorConfig
   ): boolean {
