@@ -8,7 +8,6 @@ import {
   MessageCircle,
   SearchIcon,
   CheckIcon,
-  PlusIcon,
   ClipboardListIcon,
 } from "lucide-react";
 import dayjs from "dayjs";
@@ -37,6 +36,7 @@ import categories from "~/mocks/categories.json";
 import { useQueryString } from "~/utils";
 import { CategoryOrder } from "~/constants";
 import { Badge } from "~/components/ui/badge";
+import { NewTopic } from "~/components/new-topic";
 
 type Topic = (typeof topicsMock)[0];
 type Category = (typeof categories)[0];
@@ -160,10 +160,7 @@ function MyTopicsContent() {
           </div>
         </div>
         <div className="flex-2 md:pl-4">
-          <Button className="w-full" variant="outline">
-            <PlusIcon />
-            <span>Start new topic</span>
-          </Button>
+          <NewTopic showCategorySelect onSubmit={(data) => console.log(data)} />
           <Separator className="my-12" />
           <div className="flex flex-col gap-4 text-left">
             <p className="text-sm font-medium">Order By</p>
