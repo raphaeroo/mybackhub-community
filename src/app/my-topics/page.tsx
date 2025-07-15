@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Bookmark,
@@ -45,18 +45,10 @@ function MyTopicsContent() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-  const filteredTopics = useMemo(
-    () =>
-      topicsMock.filter((topic: Topic) => {
-        if (searchParams.get("categoryId")) {
-          return topic.category_id === Number(searchParams.get("categoryId"));
-        }
-        return true; // If no categoryId is provided, return all topics
-      }),
-    [searchParams]
-  );
 
   const { createQueryString } = useQueryString();
+  
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   const [categoryOrder, setCategoryOrder] = useState<CategoryOrder>(
     CategoryOrder.MostRecent
@@ -64,7 +56,35 @@ function MyTopicsContent() {
 
   const handleOrderChange = (order: CategoryOrder) => {
     setCategoryOrder(order);
+
+    if (!topics || topics.length <= 1) return;
+
+    switch (order) {
+      case CategoryOrder.MostRecent:
+        setTopics((prev) =>
+          [...prev].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        );
+        break;
+      case CategoryOrder.MostLiked:
+        setTopics((prev) =>
+          [...prev].sort((a, b) => b.likes_count - a.likes_count)
+        );
+        break;
+      case CategoryOrder.MostComments:
+        setTopics((prev) =>
+          [...prev].sort((a, b) => b.comments_count - a.comments_count)
+        );
+        break;
+    }
   };
+
+  useEffect(() => {
+    const filteredTopics = topicsMock.filter((topic: Topic) => {
+      return topic.author.id === 1; // Assuming 1 is the current user's ID
+    });
+
+    setTopics(filteredTopics);
+  }, [searchParams]);
 
   return (
     <section className="p-8">
@@ -89,11 +109,11 @@ function MyTopicsContent() {
                 type="search"
               />
             </div>
-            <p>Listing {filteredTopics.length} topics</p>
+            <p>Listing {topics.length} topics</p>
           </div>
 
           <div className="gap-4 flex flex-col min-h-[400px]">
-            {filteredTopics.map((topic: Topic) => (
+            {topics.map((topic: Topic) => (
               <Link
                 key={topic.id}
                 href={`/topic/${topic.id}?categoryName=${encodeURIComponent(

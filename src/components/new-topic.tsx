@@ -33,41 +33,42 @@ type Category = (typeof categories)[0];
 
 type SubmitData = {
   title: string;
-  category?: string;
+  categoryId?: string;
   content: SerializedEditorState;
 };
 
 interface NewTopicProps {
   showCategorySelect?: boolean;
   onSubmit?: (data: SubmitData) => void;
+  currentCategoryId?: string;
 }
 
 export const NewTopic = ({
   showCategorySelect = false,
   onSubmit,
+  currentCategoryId,
 }: NewTopicProps) => {
   const [serializedState, setSerializedState] =
     useState<SerializedEditorState>(initialValue);
 
-  const [category, setCategory] = useState<string | undefined>(undefined);
+  const [categoryId, setCategoryId] = useState<string | undefined>(currentCategoryId);
   const [title, setTitle] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSubmit = useCallback(() => {
     onSubmit?.({
       title,
-      category,
+      categoryId,
       content: serializedState,
     });
 
     setTimeout(() => {
       setSerializedState(initialValue);
       setTitle("");
-      setCategory(undefined);
+      setCategoryId(undefined);
       setIsOpen(false);
     }, 500);
-    // onSubmit?.(data);
-  }, [title, category, serializedState, onSubmit]);
+  }, [title, categoryId, serializedState, onSubmit]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -90,7 +91,21 @@ export const NewTopic = ({
             {showCategorySelect && (
               <div className="grid gap-3">
                 <Label>Category</Label>
-                <Select defaultValue={category} onValueChange={setCategory}>
+                <Select
+                  defaultValue={
+                    categories.find((cat) => cat.id === categoryId)?.name
+                  }
+                  onValueChange={(value) => {
+                    const category = categories.find(
+                      (cat: Category) => cat.name.toLowerCase() === value
+                    );
+                    if (category) {
+                      setCategoryId(category.id.toString());
+                    } else {
+                      setCategoryId(undefined);
+                    }
+                  }}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>

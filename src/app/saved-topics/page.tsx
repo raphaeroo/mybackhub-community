@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useCallback, useMemo, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Bookmark,
@@ -35,6 +35,7 @@ import topicsMock from "~/mocks/topics.json";
 import categories from "~/mocks/categories.json";
 import { Badge } from "~/components/ui/badge";
 import { CategoryOrder } from "~/constants";
+import { useQueryString } from "~/utils";
 
 type Topic = (typeof topicsMock)[0];
 type Category = (typeof categories)[0];
@@ -43,23 +44,10 @@ function SavedTopicsContent() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-  const filteredTopics = useMemo(
-    () =>
-      topicsMock.filter((topic: Topic) => {
-        if (searchParams.get("categoryId")) {
-          return topic.category_id === Number(searchParams.get("categoryId"));
-        }
-        return true; // If no categoryId is provided, return all topics
-      }),
-    [searchParams]
-  );
 
-  const createQueryString = useCallback((name: string, value: string) => {
-    const params = new URLSearchParams();
-    params.set(name, value);
+  const { createQueryString } = useQueryString();
 
-    return params.toString();
-  }, []);
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   const [categoryOrder, setCategoryOrder] = useState<CategoryOrder>(
     CategoryOrder.MostRecent
@@ -67,7 +55,37 @@ function SavedTopicsContent() {
 
   const handleOrderChange = (order: CategoryOrder) => {
     setCategoryOrder(order);
+
+    if (!topics || topics.length <= 1) return;
+
+    switch (order) {
+      case CategoryOrder.MostRecent:
+        setTopics((prev) =>
+          [...prev].sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          )
+        );
+        break;
+      case CategoryOrder.MostLiked:
+        setTopics((prev) =>
+          [...prev].sort((a, b) => b.likes_count - a.likes_count)
+        );
+        break;
+      case CategoryOrder.MostComments:
+        setTopics((prev) =>
+          [...prev].sort((a, b) => b.comments_count - a.comments_count)
+        );
+        break;
+    }
   };
+
+  useEffect(() => {
+    // TODO: Show topics based on the current user saved topics
+
+    setTopics(topicsMock);
+  }, [searchParams]);
 
   return (
     <section className="p-8">
@@ -93,11 +111,11 @@ function SavedTopicsContent() {
                 type="search"
               />
             </div>
-            <p>Listing {filteredTopics.length} topics</p>
+            <p>Listing {topics.length} topics</p>
           </div>
 
           <div className="gap-4 flex flex-col min-h-[400px]">
-            {filteredTopics.map((topic: Topic) => (
+            {topics.map((topic: Topic) => (
               <Link
                 key={topic.id}
                 href={`/topic/${topic.id}?categoryName=${encodeURIComponent(

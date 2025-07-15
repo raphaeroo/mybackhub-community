@@ -1,5 +1,6 @@
 "use client";
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
   Bookmark,
@@ -7,7 +8,6 @@ import {
   ThumbsUpIcon,
   MessageCircle,
   SearchIcon,
-  PlusIcon,
   CheckIcon,
   ClipboardListIcon,
 } from "lucide-react";
@@ -31,24 +31,18 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
-import Link from "next/link";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
 import { CategoryOrder } from "~/constants";
 import { Badge } from "~/components/ui/badge";
+import { NewTopic } from "~/components/new-topic";
 
 type Topic = (typeof topicsMock)[0];
 
 export default function Page() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const filteredTopics = useMemo(
-    () =>
-      topicsMock.filter((topic: Topic) => {
-        return topic.category_id === Number(searchParams.get("categoryId"));
-      }),
-    [searchParams]
-  );
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   const [categoryOrder, setCategoryOrder] = useState<CategoryOrder>(
     CategoryOrder.MostRecent
@@ -56,7 +50,35 @@ export default function Page() {
 
   const handleOrderChange = (order: CategoryOrder) => {
     setCategoryOrder(order);
+
+    if (!topics || topics.length <= 1) return;
+
+    switch (order) {
+      case CategoryOrder.MostRecent:
+        setTopics((prev) =>
+          [...prev].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        );
+        break;
+      case CategoryOrder.MostLiked:
+        setTopics((prev) =>
+          [...prev].sort((a, b) => b.likes_count - a.likes_count)
+        );
+        break;
+      case CategoryOrder.MostComments:
+        setTopics((prev) =>
+          [...prev].sort((a, b) => b.comments_count - a.comments_count)
+        );
+        break;
+    }
   };
+
+  useEffect(() => {
+    const filteredTopics = topicsMock.filter((topic: Topic) => {
+      return topic.category_id === Number(searchParams.get("categoryId"));
+    });
+
+    setTopics(filteredTopics);
+  }, [searchParams]);
 
   return (
     <section className="p-8">
@@ -100,11 +122,11 @@ export default function Page() {
                 type="search"
               />
             </div>
-            <p>Listing {filteredTopics.length} topics</p>
+            <p>Listing {topics.length} topics</p>
           </div>
 
           <div className="gap-4 flex flex-col min-h-[400px]">
-            {filteredTopics.map((topic: Topic) => (
+            {topics.map((topic: Topic) => (
               <Link
                 key={topic.id}
                 href={`/topic/${topic.id}?categoryName=${encodeURIComponent(
@@ -171,10 +193,10 @@ export default function Page() {
           </div>
         </div>
         <div className="flex-2 pt-4 md:pl-4">
-          <Button className="w-full" variant="outline">
-            <PlusIcon />
-            <span>Start new topic</span>
-          </Button>
+          <NewTopic
+            onSubmit={(data) => console.log(data)}
+            currentCategoryId={searchParams.get("categoryId") || undefined}
+          />
           <Separator className="my-12" />
           <div className="flex flex-col gap-4 text-left">
             <p className="text-sm font-medium">Order By</p>
