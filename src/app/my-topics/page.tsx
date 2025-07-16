@@ -79,8 +79,15 @@ function MyTopicsContent() {
   };
 
   useEffect(() => {
-    const filteredTopics = topicsMock.filter((topic: Topic) => {
+    const selectedUserTopics = topicsMock.filter((topic: Topic) => {
       return topic.author.id === 1; // Assuming 1 is the current user's ID
+    });
+
+    const filteredTopics = selectedUserTopics.filter((topic: Topic) => {
+      if (searchParams.get("categoryId")) {
+        return topic.category_id === Number(searchParams.get("categoryId"));
+      }
+      return true; // If no categoryId is provided, return all topics
     });
 
     setTopics(filteredTopics);

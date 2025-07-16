@@ -84,7 +84,14 @@ function SavedTopicsContent() {
   useEffect(() => {
     // TODO: Show topics based on the current user saved topics
 
-    setTopics(topicsMock);
+    const filteredTopics = topicsMock.filter((topic: Topic) => {
+      if (searchParams.get("categoryId")) {
+        return topic.category_id === Number(searchParams.get("categoryId"));
+      }
+      return true; // If no categoryId is provided, return all topics
+    });
+
+    setTopics(filteredTopics);
   }, [searchParams]);
 
   return (
