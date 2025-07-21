@@ -28,6 +28,7 @@ import { editorRef } from "~/utils";
 import categories from "~/mocks/categories.json";
 import { useCallback, useState } from "react";
 import { Input } from "./ui/input";
+import { useMe } from "~/Contexts/meContext";
 
 type Category = (typeof categories)[0];
 
@@ -35,6 +36,7 @@ type SubmitData = {
   title: string;
   categoryId?: string;
   content: SerializedEditorState;
+  authorId?: string;
 };
 
 interface NewTopicProps {
@@ -50,6 +52,7 @@ export const NewTopic = ({
 }: NewTopicProps) => {
   const [serializedState, setSerializedState] =
     useState<SerializedEditorState>(initialValue);
+  const { me } = useMe();;
 
   const [categoryId, setCategoryId] = useState<string | undefined>(currentCategoryId);
   const [title, setTitle] = useState<string>("");
@@ -60,6 +63,7 @@ export const NewTopic = ({
       title,
       categoryId,
       content: serializedState,
+      authorId: me?.id,
     });
 
     setTimeout(() => {
@@ -68,7 +72,7 @@ export const NewTopic = ({
       setCategoryId(undefined);
       setIsOpen(false);
     }, 500);
-  }, [title, categoryId, serializedState, onSubmit]);
+  }, [title, categoryId, serializedState, onSubmit, me]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

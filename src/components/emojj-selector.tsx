@@ -14,8 +14,6 @@ import { editorRef } from "~/utils";
 
 export const EmojiPicker = () => {
   const onEmojiSelect = useCallback((emoji: { native: string }) => {
-    console.log("Selected Emoji:", emoji);
-
     if (editorRef.current) {
       editorRef.current.update(() => {
         const selection = $getSelection();

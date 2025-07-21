@@ -1,0 +1,60 @@
+import axios from "axios";
+import { signOut } from "next-auth/react";
+
+const SSO_API = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_SSO_BASE_URL,
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+});
+
+const APP_API = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  timeout: 5000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+});
+
+SSO_API.interceptors.request.use(
+  async (config) => {
+    let accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+      const response = await fetch("/api/auth/token");
+      const { token } = await response.json();
+
+      if (!token) {
+        signOut();
+        throw new Error("No access token found");
+      }
+
+      accessToken = token;
+    }
+
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+SSO_API.interceptors.response.use(
+  (response) => response, // Directly return successful responses.
+  (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // Mark the request as retried to avoid infinite loops.
+      signOut();
+    }
+    return Promise.reject(error); // For all other errors, return the error as is.
+  }
+);
+
+export { SSO_API, APP_API };

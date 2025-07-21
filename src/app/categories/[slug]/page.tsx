@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+
 import {
   Bookmark,
   DotIcon,
@@ -10,6 +11,7 @@ import {
   SearchIcon,
   CheckIcon,
   ClipboardListIcon,
+  Loader,
 } from "lucide-react";
 import dayjs from "dayjs";
 import {
@@ -21,7 +23,6 @@ import {
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
 
-import topicsMock from "~/mocks/topics.json";
 import {
   Card,
   CardContent,
@@ -36,49 +37,96 @@ import { Separator } from "~/components/ui/separator";
 import { CategoryOrder } from "~/constants";
 import { Badge } from "~/components/ui/badge";
 import { NewTopic } from "~/components/new-topic";
-
-type Topic = (typeof topicsMock)[0];
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { loadPostsByCategory, QueryKeys } from "~/core/api/queries";
+import { Post } from "~/types/post";
+import { LexicalRenderer } from "~/components/lexical-renderer";
+import { createPost } from "~/core/api/mutations";
+import { toast } from "sonner";
 
 export default function Page() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const [topics, setTopics] = useState<Post[]>([]);
+  const { data, error, isLoading, refetch } = useQuery<Post[]>({
+    queryKey: [QueryKeys.LoadPostsByCategory, searchParams.get("categoryId")],
+    queryFn: () => loadPostsByCategory(searchParams.get("categoryId") || ""), // Ensure categoryId is a string
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+
+  const { isError, isPending, mutate, isSuccess } = useMutation({
+    mutationFn: createPost,
+  });
 
   const [categoryOrder, setCategoryOrder] = useState<CategoryOrder>(
     CategoryOrder.MostRecent
   );
 
+  useEffect(() => {
+    if (isError) {
+      toast.error("Failed to disconnect application. Please try again later.");
+    }
+
+    if (isSuccess) {
+      toast.success("Application disconnected successfully.");
+      refetch();
+    }
+  }, [isError, isSuccess, refetch]);
+
   const handleOrderChange = (order: CategoryOrder) => {
     setCategoryOrder(order);
 
-    if (!topics || topics.length <= 1) return;
+    if (!data || data.length <= 1) return;
 
     switch (order) {
       case CategoryOrder.MostRecent:
         setTopics((prev) =>
-          [...prev].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          [...prev].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
         );
         break;
       case CategoryOrder.MostLiked:
-        setTopics((prev) =>
-          [...prev].sort((a, b) => b.likes_count - a.likes_count)
-        );
+        setTopics((prev) => [...prev].sort((a, b) => b.likes - a.likes));
         break;
-      case CategoryOrder.MostComments:
-        setTopics((prev) =>
-          [...prev].sort((a, b) => b.comments_count - a.comments_count)
-        );
-        break;
+      // case CategoryOrder.MostComments:
+      //   setTopics((prev) =>
+      //     [...prev].sort((a, b) => b.comments_count - a.comments_count)
+      //   );
+      //   break;
     }
   };
 
   useEffect(() => {
-    const filteredTopics = topicsMock.filter((topic: Topic) => {
-      return topic.category_id === Number(searchParams.get("categoryId"));
-    });
+    if (!isLoading && data) {
+      setTopics(data);
+    }
+  }, [isLoading, data]);
 
-    setTopics(filteredTopics);
-  }, [searchParams]);
+  if (isLoading || isPending) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-600">
+          Error loading application, please try again later.{" "}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {error instanceof Error
+            ? error.message
+            : "An unexpected error occurred."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <section className="p-8">
@@ -126,12 +174,14 @@ export default function Page() {
           </div>
 
           <div className="gap-4 flex flex-col min-h-[400px]">
-            {topics.map((topic: Topic) => (
+            {topics.map((topic: Post) => (
               <Link
                 key={topic.id}
                 href={`/topic/${topic.id}?categoryName=${encodeURIComponent(
-                  topic.category_name
-                )}&categoryId=${topic.category_id}&from=${pathname}`}
+                  searchParams.get("title") || "Category"
+                )}&categoryId=${searchParams.get(
+                  "categoryId"
+                )}&from=${pathname}`}
               >
                 <Card className="hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start">
@@ -140,7 +190,7 @@ export default function Page() {
                         <CardTitle>{topic.title}</CardTitle>
                       </CardHeader>
                       <CardContent className="line-clamp-2 text-sm">
-                        {topic.content}
+                        <LexicalRenderer content={topic.content} isExcerpt />
                       </CardContent>
                     </div>
                     <div className="pr-2">
@@ -154,21 +204,19 @@ export default function Page() {
                       <div className="flex items-center gap-2 mb-2 md:mb-0">
                         <Avatar className="w-8 h-8">
                           <AvatarFallback className="font-medium">
-                            {topic.author.display_name[0]}
+                            {topic.author.firstName[0]}
                           </AvatarFallback>
                         </Avatar>
-                        <p className="font-medium">
-                          {topic.author.display_name}
-                        </p>
+                        <p className="font-medium">{topic.author.firstName}</p>
                       </div>
                       <div className="flex items-center md:items-center gap-2 text-xs text-gray-500">
                         <DotIcon className="text-gray-300 hidden md:block" />
                         <p className="text-xs text-gray-500">
-                          {dayjs(topic.created_at).format("MM/DD/YYYY")}
+                          {dayjs(topic.createdAt).format("MM/DD/YYYY")}
                         </p>
                         <DotIcon className="text-gray-300" />
                         <Badge variant="outline">
-                          <ClipboardListIcon /> {topic.category_name}
+                          <ClipboardListIcon /> {searchParams.get("title")}
                         </Badge>
                       </div>
                     </div>
@@ -176,14 +224,12 @@ export default function Page() {
                       <div className="flex items-center">
                         <ThumbsUpIcon className="h-4 w-4" />
                         <span className="ml-1 text-xs">
-                          {topic.likes_count} likes
+                          {topic.likes} likes
                         </span>
                       </div>
                       <div className="flex items-center">
                         <MessageCircle className="h-4 w-4" />
-                        <span className="ml-1 text-xs">
-                          {topic.comments_count} comments
-                        </span>
+                        <span className="ml-1 text-xs">{0} comments</span>
                       </div>
                     </div>
                   </CardFooter>
@@ -194,7 +240,10 @@ export default function Page() {
         </div>
         <div className="flex-2 pt-4 md:pl-4">
           <NewTopic
-            onSubmit={(data) => console.log(data)}
+            onSubmit={(data) => mutate({
+              ...data,
+              content: JSON.stringify(data.content)
+            })}
             currentCategoryId={searchParams.get("categoryId") || undefined}
           />
           <Separator className="my-12" />

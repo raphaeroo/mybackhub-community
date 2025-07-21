@@ -11,6 +11,7 @@ import QueryClientProvider from "~/providers/QueryProvider";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/app-sidebar";
 import { ActiveProvider } from "~/Contexts/activeContext";
+import MeProvider from "~/providers/MeProvider";
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -76,7 +77,11 @@ export default async function RootLayout({
           </ActiveProvider>
           <main className="w-full bg-gray-50">
             <SidebarTrigger />
-            <QueryClientProvider>{children}</QueryClientProvider>
+            <QueryClientProvider>
+              <MeProvider>
+                {children}
+              </MeProvider>
+            </QueryClientProvider>
           </main>
         </SidebarProvider>
         <Toaster />
