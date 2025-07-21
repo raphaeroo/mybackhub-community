@@ -8,7 +8,6 @@ import {
   ThumbsUpIcon,
   MessageCircle,
 } from "lucide-react";
-import { RichTextLexicalRenderer } from "@webiny/react-rich-text-lexical-renderer";
 
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import {
@@ -27,6 +26,7 @@ import { PostCategory } from "~/types/post";
 
 import { Loader } from "~/components/loader";
 import { Comment } from "~/types/comment";
+import { LexicalRenderer } from "~/components/lexical-renderer";
 
 export default function Page({}) {
   const searchParams = useSearchParams();
@@ -241,7 +241,7 @@ export default function Page({}) {
       <div className="mt-4">
         <h4 className="font-normal text-2xl mb-2">{currentTopic?.title}</h4>
         <div className="mb-4">
-          {currentTopic?.content && <RichTextLexicalRenderer value={JSON.parse(currentTopic.content)} />}
+          {currentTopic?.content && <LexicalRenderer content={currentTopic.content} />}
         </div>
       </div>
       <div className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-center py-4">
@@ -266,7 +266,7 @@ export default function Page({}) {
               Last Activity at{" "}
               {dayjs().diff(dayjs(currentTopic?.updatedAt), "days") > 0
                 ? dayjs(currentTopic?.updatedAt).format("MM/DD/YYYY")
-                : `${dayjs(currentTopic?.updatedAt).format("HH:mm")} ago`}
+                : `${dayjs(currentTopic?.updatedAt).format("HH:mm")}`}
             </p>
           </div>
         </div>

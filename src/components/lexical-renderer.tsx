@@ -42,7 +42,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
           <p
             className={`${getTextAlignment(node.format)} ${
               isExcerpt ? "line-clamp-2" : ""
-            }`}
+            } mb-2`}
           >
             {node.children?.map((child, index) => (
               <React.Fragment key={index}>{renderNode(child)}</React.Fragment>
@@ -149,7 +149,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
   };
 
   try {
-    const parsedContent: LexicalNode =
+    const parsedContent: { root: LexicalNode } =
       typeof content === "string" ? JSON.parse(content) : content;
     return (
       <div
@@ -157,7 +157,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
           isExcerpt ? "relative overflow-hidden" : ""
         }`}
       >
-        {renderNode(parsedContent)}
+        {renderNode(parsedContent.root)}
       </div>
     );
   } catch (error) {
