@@ -23,12 +23,10 @@ interface LexicalNode {
 
 interface LexicalRendererProps {
   content?: string | LexicalNode;
-  isExcerpt?: boolean;
 }
 
 export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
   content,
-  isExcerpt = false,
 }) => {
   const renderNode = (node: LexicalNode): React.ReactNode => {
     switch (node.type) {
@@ -39,11 +37,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
 
       case "paragraph":
         return (
-          <p
-            className={`${getTextAlignment(node.format)} ${
-              isExcerpt ? "line-clamp-2" : ""
-            } mb-2`}
-          >
+          <p className={`${getTextAlignment(node.format)} ${""} mb-2`}>
             {node.children?.map((child, index) => (
               <React.Fragment key={index}>{renderNode(child)}</React.Fragment>
             ))}
@@ -53,11 +47,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
       case "heading":
         const Tag = node.tag as keyof React.JSX.IntrinsicElements;
         return (
-          <Tag
-            className={`${getTextAlignment(node.format)} ${
-              isExcerpt ? "line-clamp-2" : ""
-            }`}
-          >
+          <Tag className={`${getTextAlignment(node.format)} ${""}`}>
             {node.children?.map((child, index) => (
               <React.Fragment key={index}>{renderNode(child)}</React.Fragment>
             ))}
@@ -86,7 +76,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
       case "list":
         const ListTag = node.listType === "number" ? "ol" : "ul";
         return (
-          <ListTag className={isExcerpt ? "line-clamp-2" : ""}>
+          <ListTag>
             {node.children?.map((child, index) => (
               <React.Fragment key={index}>{renderNode(child)}</React.Fragment>
             ))}
@@ -104,7 +94,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
 
       case "quote":
         return (
-          <blockquote className={isExcerpt ? "line-clamp-2" : ""}>
+          <blockquote>
             {node.children?.map((child, index) => (
               <React.Fragment key={index}>{renderNode(child)}</React.Fragment>
             ))}
@@ -113,7 +103,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
 
       case "code":
         return (
-          <pre className={isExcerpt ? "line-clamp-2 overflow-hidden" : ""}>
+          <pre>
             <code className={node.language ? `language-${node.language}` : ""}>
               {node.children?.map((child, index) => (
                 <React.Fragment key={index}>{renderNode(child)}</React.Fragment>
@@ -152,11 +142,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
     const parsedContent: { root: LexicalNode } =
       typeof content === "string" ? JSON.parse(content) : content;
     return (
-      <div
-        className={`lexical-content ${
-          isExcerpt ? "relative overflow-hidden" : ""
-        }`}
-      >
+      <div className={`lexical-content ${""}`}>
         {renderNode(parsedContent.root)}
       </div>
     );

@@ -2,30 +2,16 @@
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
 import { Loader } from "~/components/loader";
 import { Card, CardHeader } from "~/components/ui/card";
 import { useMe } from "~/Contexts/meContext";
-import { fetchUserData, loadCategories, QueryKeys } from "~/core/api/queries";
+import { loadCategories, QueryKeys } from "~/core/api/queries";
 
 import { Category } from "~/types/category";
-import { UserResponse } from "~/types/user";
 import { getCategoryImagePathByCategoryName } from "~/utils";
 
-const MOCK_USER_ID = "550e8400-e29b-41d4-a716-446655440000";
-
 export default function Page() {
-  const { setMe } = useMe();
-  const {
-    data: userData,
-    error: userError,
-    isLoading: userIsLoading,
-  } = useQuery<UserResponse>({
-    queryKey: [QueryKeys.UserData],
-    queryFn: () => fetchUserData(MOCK_USER_ID), // Replace with actual externalId
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-  });
+  const { me } = useMe();
 
   const {
     data: categoriesData,
@@ -38,14 +24,7 @@ export default function Page() {
     refetchOnMount: false,
   });
 
-  useEffect(() => {
-    if (userData) {
-      setMe(userData);
-    }
-    // Optionally, you can handle any side effects or state updates here
-  }, [userData, setMe]);
-
-  if (userIsLoading || categoriesIsLoading) {
+  if (categoriesIsLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader />
@@ -53,15 +32,15 @@ export default function Page() {
     );
   }
 
-  if (userError || categoriesError) {
+  if (categoriesError) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-red-600">
           Error loading application, please try again later.{" "}
         </p>
         <p className="text-sm text-muted-foreground">
-          {(userError || categoriesError) instanceof Error
-            ? (userError || categoriesError)!.message
+          {categoriesError instanceof Error
+            ? categoriesError!.message
             : "An unexpected error occurred."}
         </p>
       </div>
@@ -72,7 +51,7 @@ export default function Page() {
     <section className="p-8">
       <div>
         <h4 className="text-2xl font-medium mb-2">
-          Hi {userData?.firstName}. Welcome to our Community!
+          Hi {me?.firstName}. Welcome to our Community!
         </h4>
         <p className="mb-4">
           Choose a category and find support and information about back pain and

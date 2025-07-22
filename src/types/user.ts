@@ -5,6 +5,8 @@ export type UserResponse = {
   email: string;
   firstName: string;
   lastName: string;
+  postsLiked: string[];
+  commentsLiked: string[];
   createdAt: string;
   updatedAt: string;
 };

@@ -1,5 +1,5 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
@@ -27,21 +27,42 @@ import { PostCategory } from "~/types/post";
 import { Loader } from "~/components/loader";
 import { Comment } from "~/types/comment";
 import { LexicalRenderer } from "~/components/lexical-renderer";
+import { useMe } from "~/Contexts/meContext";
+import { useMemo, useState } from "react";
+import {
+  commentOnContent,
+  toggleLikePost,
+  CreateCommentDto,
+  toggleLikeComment,
+} from "~/core/api/mutations";
+import { toast } from "sonner";
 
 export default function Page({}) {
+  const { me, refetch: refetchMe } = useMe();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+
+  const [newComment, setNewComment] = useState<string | undefined>(undefined);
+  const [newReply, setNewReply] = useState<string | undefined>(undefined);
+  const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
+
   const categoryName = searchParams.get("categoryName") || "General";
   const from = searchParams.get("from") || "/";
   const categoryId = searchParams.get("categoryId") || "1"; // Default to
+
+  const postId = pathname.split("/").pop() || "";
+
+  const postLiked = useMemo(() => {
+    return me?.postsLiked.includes(postId);
+  }, [me?.postsLiked, postId]);
 
   const {
     data: currentTopic,
     error: postError,
     isLoading: postLoading,
   } = useQuery<PostCategory>({
-    queryKey: [QueryKeys.LoadPost, pathname.split("/").pop() || ""],
-    queryFn: () => loadPost(pathname.split("/").pop() || ""),
+    queryKey: [QueryKeys.LoadPost, postId],
+    queryFn: () => loadPost(postId),
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
@@ -50,11 +71,59 @@ export default function Page({}) {
     data: currentComments,
     error: commentsError,
     isLoading: commentsLoading,
+    refetch: refetchComments,
   } = useQuery<Comment[]>({
-    queryKey: [QueryKeys.LoadCommentsByPostId, pathname.split("/").pop() || ""],
-    queryFn: () => loadCommentsByPostId(pathname.split("/").pop() || ""),
+    queryKey: [QueryKeys.LoadCommentsByPostId, postId],
+    queryFn: () => loadCommentsByPostId(postId),
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+  });
+  const { mutate: likePostMutate } = useMutation({
+    mutationFn: () =>
+      toggleLikePost(postId, postLiked ? "unlike" : "like", me?.id),
+    onSuccess: () => {
+      if (!postLiked) {
+        toast.success("Post liked successfully!");
+      }
+      refetchMe();
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to like post"
+      );
+    },
+  });
+
+  const { mutate: likeCommentMutate } = useMutation({
+    mutationFn: ({
+      commentId,
+      action,
+    }: {
+      commentId: string;
+      action: "like" | "unlike";
+    }) => toggleLikeComment(commentId, action, me?.id),
+    onSuccess: () => {
+      refetchMe();
+      refetchComments();
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to like comment"
+      );
+    },
+  });
+
+  const { mutate: commentMutate } = useMutation({
+    mutationFn: (data: CreateCommentDto) => commentOnContent(data),
+    onSuccess: () => {
+      toast.success("Comment added successfully!");
+      refetchComments();
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add comment"
+      );
+    },
   });
 
   // Organize comments into hierarchical structure
@@ -64,7 +133,7 @@ export default function Page({}) {
 
     // First pass: create map of all comments with replies array
     comments.forEach((comment) => {
-      commentMap.set(comment.id, { ...comment, replies: [] });
+      commentMap.set(comment.id, { ...comment, replies: comment.replies });
     });
 
     // Second pass: organize into hierarchy
@@ -85,8 +154,6 @@ export default function Page({}) {
 
     return rootComments;
   };
-
-  const organizedComments = organizeComments(currentComments || []);
 
   // Comment component for recursive rendering
   const CommentItem = ({
@@ -129,16 +196,78 @@ export default function Page({}) {
             <p className="text-sm text-gray-700 mb-2 leading-relaxed">
               {comment.content}
             </p>
-            <div className="flex items-center gap-4 text-xs">
-              <button className="flex items-center gap-1 text-gray-500 hover:text-primary">
+            <div className="flex flex-col md:flex-row items-start gap-4 text-xs">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`flex items-center gap-1 ${
+                  me?.commentsLiked.includes(comment.id)
+                    ? "text-primary"
+                    : "text-gray-500 hover:text-primary"
+                }`}
+                onClick={() =>
+                  likeCommentMutate({
+                    commentId: comment.id,
+                    action: me?.commentsLiked.includes(comment.id)
+                      ? "unlike"
+                      : "like",
+                  })
+                }
+              >
                 <ThumbsUpIcon className="w-3 h-3" />
                 <span>{comment.likes}</span>
-              </button>
+              </Button>
               {comment.parentComment === null && (
-                <button className="flex items-center gap-1 text-gray-500 hover:text-primary">
-                  <MessageCircle className="w-3 h-3" />
-                  <span>Reply</span>
-                </button>
+                <div>
+                  {replyToCommentId === comment.id ? (
+                    <div className="flex items-start md:items-center gap-2 flex-col md:flex-row">
+                      <Input
+                        className="w-full"
+                        autoFocus
+                        type="text"
+                        placeholder="Write a reply..."
+                        value={newReply}
+                        onChange={(e) => setNewReply(e.target.value)}
+                      />
+                      <div className="flex items-center gap-2 mt-2 md:mt-0">
+                        <Button
+                          onClick={() => {
+                            if (!newReply || newReply.trim() === "") {
+                              toast.error("Reply cannot be empty");
+                              return;
+                            }
+
+                            commentMutate({
+                              content: newReply,
+                              commentId: comment.id,
+                              userId: me?.id,
+                            });
+                            setNewReply("");
+                            setReplyToCommentId(null);
+                          }}
+                        >
+                          Comment
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="text-gray-500 hover:text-primary"
+                          onClick={() => setReplyToCommentId(null)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-1 text-gray-500 hover:text-primary"
+                      onClick={() => setReplyToCommentId(comment.id)}
+                    >
+                      <MessageCircle className="w-3 h-3" />
+                      <span>Reply</span>
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
           </div>
@@ -241,7 +370,9 @@ export default function Page({}) {
       <div className="mt-4">
         <h4 className="font-normal text-2xl mb-2">{currentTopic?.title}</h4>
         <div className="mb-4">
-          {currentTopic?.content && <LexicalRenderer content={currentTopic.content} />}
+          {currentTopic?.content && (
+            <LexicalRenderer content={currentTopic.content} />
+          )}
         </div>
       </div>
       <div className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-center py-4">
@@ -271,7 +402,10 @@ export default function Page({}) {
           </div>
         </div>
         <div className="flex items-center gap-4 font-medium mt-4 md:mt-0">
-          <Button variant="outline">
+          <Button
+            variant={postLiked ? "default" : "outline"}
+            onClick={() => likePostMutate()}
+          >
             <ThumbsUpIcon className="h-4 w-4" />
             Like
           </Button>
@@ -284,19 +418,41 @@ export default function Page({}) {
       <Separator />
       <div className="flex gap-2 md:gap-6 items-center justify-between my-4">
         <Avatar className="w-10 h-10">
-          <AvatarFallback className="font-medium">R</AvatarFallback>
+          <AvatarFallback className="font-medium">
+            {me?.firstName[0]}
+          </AvatarFallback>
         </Avatar>
-        <Input className="w-full" />
-        <Button>Post</Button>
+        <Input
+          className="w-full"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        />
+        <Button
+          onClick={() => {
+            if (!newComment || newComment.trim() === "") {
+              toast.error("Comment cannot be empty");
+              return;
+            }
+
+            commentMutate({
+              content: newComment,
+              postId: currentTopic?.id,
+              userId: me?.id,
+            });
+            setNewComment("");
+          }}
+        >
+          Post
+        </Button>
       </div>
       <Separator />
       <div className="mt-6">
         <h3 className="text-lg font-medium mb-4">
           Comments ({currentComments?.length})
         </h3>
-        {organizedComments.length > 0 ? (
+        {currentComments && organizeComments(currentComments).length > 0 ? (
           <div className="space-y-2">
-            {organizedComments.map((comment) => (
+            {organizeComments(currentComments).map((comment) => (
               <CommentItem key={comment.id} comment={comment} />
             ))}
           </div>

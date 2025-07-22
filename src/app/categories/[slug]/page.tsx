@@ -189,8 +189,8 @@ export default function Page() {
                       <CardHeader className="w-full">
                         <CardTitle>{topic.title}</CardTitle>
                       </CardHeader>
-                      <CardContent className="line-clamp-2 text-sm">
-                        <LexicalRenderer content={topic.content} isExcerpt />
+                      <CardContent className="line-clamp-3 text-sm">
+                        <LexicalRenderer content={topic.content} />
                       </CardContent>
                     </div>
                     <div className="pr-2">
