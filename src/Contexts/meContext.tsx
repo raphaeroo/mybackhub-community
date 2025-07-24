@@ -36,7 +36,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   const [me, setMe] = useState<UserResponse | null>(null);
   const [userId, setUserId] = useState(
     typeof window !== "undefined"
-      ? localStorage.getItem("externalId") || ""
+      ? localStorage.getItem("externalId") || ''
       : ""
   ); // temporary,
   const [userKnowsID, setUserKnowsID] = useState<boolean>(false);
@@ -57,7 +57,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   const { mutate } = useMutation({
     mutationFn: createUserByExternalId,
     onSuccess: (user) => {
-      setMe(user);
+      setUserId(user.externalId);
       refetch();
     },
     onError: (error) => {
