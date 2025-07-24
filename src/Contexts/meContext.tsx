@@ -18,6 +18,7 @@ import { fetchUserData, QueryKeys } from "~/core/api/queries";
 import { UserResponse } from "~/types/user";
 
 // const MOCK_USER_ID = "550e8400-e29b-41d4-a716-446655440000";
+const MOCK_USER_ID = "550e8400-e29b-41d4-a716-";
 
 interface MeContextType {
   me: UserResponse | null;
@@ -34,7 +35,9 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [me, setMe] = useState<UserResponse | null>(null);
   const [userId, setUserId] = useState(
-    typeof window !== "undefined" ? localStorage.getItem("externalId") || "" : ""
+    typeof window !== "undefined"
+      ? localStorage.getItem("externalId") || ""
+      : ""
   ); // temporary,
   const [userKnowsID, setUserKnowsID] = useState<boolean>(false);
   // This is temporary, once the production is ready you will be able to register using the
@@ -151,7 +154,11 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
                     e.preventDefault();
                     if (firstName && lastName && email) {
                       mutate({
-                        externalId: Math.random().toString(36).substring(2, 15),
+                        externalId: `${MOCK_USER_ID}${
+                          Math.floor(
+                            Math.random() * (999999999999 - 100000000000 + 1)
+                          ) + 100000000000
+                        }`,
                         username: `${firstName.toLowerCase()}-${lastName.toLowerCase()}-${email}`,
                         email,
                         firstName,
