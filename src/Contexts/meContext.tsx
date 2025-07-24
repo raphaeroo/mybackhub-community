@@ -1,4 +1,4 @@
-"useClient";
+"use client";
 import { DialogContent, DialogDescription } from "@radix-ui/react-dialog";
 import {
   QueryObserverResult,
@@ -34,7 +34,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [me, setMe] = useState<UserResponse | null>(null);
   const [userId, setUserId] = useState(
-    localStorage.getItem("externalId") || ""
+    typeof window !== "undefined" ? localStorage.getItem("externalId") || "" : ""
   ); // temporary,
   const [userKnowsID, setUserKnowsID] = useState<boolean>(false);
   // This is temporary, once the production is ready you will be able to register using the
@@ -67,7 +67,9 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (data) {
-      localStorage.setItem("externalId", data.externalId);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("externalId", data.externalId);
+      }
       setMe(data);
     } else if (error && !isLoading) {
       // mutate({

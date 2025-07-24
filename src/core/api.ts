@@ -21,7 +21,7 @@ const APP_API = axios.create({
 
 SSO_API.interceptors.request.use(
   async (config) => {
-    let accessToken = localStorage.getItem("accessToken");
+    let accessToken = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
     if (!accessToken) {
       const response = await fetch("/api/auth/token");
