@@ -58,6 +58,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
     mutationFn: createUserByExternalId,
     onSuccess: (user) => {
       setMe(user);
+      refetch();
     },
     onError: (error) => {
       toast.error(
