@@ -196,7 +196,7 @@ function MyTopicsContent() {
               >
                 <Card className="hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start">
-                    <div>
+                    <div className="w-full">
                       <CardHeader className="w-full">
                         <CardTitle>{topic.title}</CardTitle>
                       </CardHeader>
