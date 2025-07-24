@@ -53,6 +53,9 @@ export default function Page({}) {
   const postId = pathname.split("/").pop() || "";
 
   const postLiked = useMemo(() => {
+    if (!me?.postsLiked) {
+      return [];
+    }
     return me?.postsLiked.includes(postId);
   }, [me?.postsLiked, postId]);
 
@@ -201,14 +204,14 @@ export default function Page({}) {
                 variant="ghost"
                 size="icon"
                 className={`flex items-center gap-1 ${
-                  me?.commentsLiked.includes(comment.id)
+                  me?.commentsLiked?.includes(comment.id)
                     ? "text-primary"
                     : "text-gray-500 hover:text-primary"
                 }`}
                 onClick={() =>
                   likeCommentMutate({
                     commentId: comment.id,
-                    action: me?.commentsLiked.includes(comment.id)
+                    action: me?.commentsLiked?.includes(comment.id)
                       ? "unlike"
                       : "like",
                   })
