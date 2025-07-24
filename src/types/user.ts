@@ -9,4 +9,5 @@ export type UserResponse = {
   commentsLiked: string[];
   createdAt: string;
   updatedAt: string;
+  bookmarks: string[]; // Array of post IDs bookmarked by the user
 };

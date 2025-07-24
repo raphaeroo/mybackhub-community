@@ -25,12 +25,11 @@ import {
 import { Editor, initialValue } from "./blocks/editor-00/editor";
 import { editorRef } from "~/utils";
 
-import categories from "~/mocks/categories.json";
 import { useCallback, useState } from "react";
 import { Input } from "./ui/input";
 import { useMe } from "~/Contexts/meContext";
+import { Category } from "~/types/category";
 
-type Category = (typeof categories)[0];
 
 type SubmitData = {
   title: string;
@@ -43,12 +42,14 @@ interface NewTopicProps {
   showCategorySelect?: boolean;
   onSubmit?: (data: SubmitData) => void;
   currentCategoryId?: string;
+  categories?: Category[];
 }
 
 export const NewTopic = ({
   showCategorySelect = false,
   onSubmit,
   currentCategoryId,
+  categories = []
 }: NewTopicProps) => {
   const [serializedState, setSerializedState] =
     useState<SerializedEditorState>(initialValue);

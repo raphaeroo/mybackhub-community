@@ -1,5 +1,7 @@
+import { BookmarkResponse } from "~/types/bookmark";
 import { APP_API } from "../api";
 import { PostCategory } from "~/types/post";
+import { UserResponse } from "~/types/user";
 
 export type CreatePostData = {
   title: string;
@@ -13,6 +15,25 @@ export type CreateCommentDto = {
   postId?: string;
   commentId?: string;
   userId?: string;
+};
+
+export type CreateUser = {
+  externalId: string;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+};
+
+export const createUserByExternalId = async (user: CreateUser) => {
+  try {
+    const { data } = await APP_API.post<UserResponse>("/users", user);
+    return data;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to create user"
+    );
+  }
 };
 
 export const createPost = async (postData: CreatePostData) => {
@@ -77,6 +98,34 @@ export const commentOnContent = async ({
   } catch (error) {
     throw new Error(
       error instanceof Error ? error.message : "Failed to comment on post"
+    );
+  }
+};
+
+export const bookmarkPost = async ({
+  postId,
+  userId,
+  include = true,
+}: {
+  postId: string;
+  userId?: string;
+  include?: boolean;
+}) => {
+  try {
+    if (include) {
+      const { data } = await APP_API.post<BookmarkResponse>(
+        `/posts/bookmark/${postId}/${userId}`
+      );
+      return data;
+    }
+
+    const { data } = await APP_API.delete<BookmarkResponse>(
+      `/posts/bookmark/${postId}/${userId}`
+    );
+    return data;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to bookmark post"
     );
   }
 };

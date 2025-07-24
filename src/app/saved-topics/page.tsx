@@ -1,14 +1,15 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
-  Bookmark,
   DotIcon,
   ThumbsUpIcon,
   MessageCircle,
   SearchIcon,
   CheckIcon,
   ClipboardListIcon,
+  Loader,
+  BookmarkCheck,
 } from "lucide-react";
 import dayjs from "dayjs";
 import {
@@ -31,26 +32,63 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-import topicsMock from "~/mocks/topics.json";
-import categories from "~/mocks/categories.json";
 import { Badge } from "~/components/ui/badge";
 import { CategoryOrder } from "~/constants";
 import { useQueryString } from "~/utils";
-
-type Topic = (typeof topicsMock)[0];
-type Category = (typeof categories)[0];
+import { PostCategory } from "~/types/post";
+import {
+  loadBookmarksByUser,
+  loadCategories,
+  QueryKeys,
+} from "~/core/api/queries";
+import { useMe } from "~/Contexts/meContext";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Category } from "~/types/category";
+import { bookmarkPost } from "~/core/api/mutations";
+import { toast } from "sonner";
+import { LexicalRenderer } from "~/components/lexical-renderer";
 
 function SavedTopicsContent() {
-  const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
+  const { me } = useMe();
 
   const { createQueryString } = useQueryString();
 
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const [topics, setTopics] = useState<PostCategory[]>([]);
 
-  const [categoryOrder, setCategoryOrder] = useState<CategoryOrder>(
-    CategoryOrder.MostRecent
+  const { data, error, isLoading, refetch } = useQuery<PostCategory[]>({
+    queryKey: [QueryKeys.LoadBookmarksByUser, me?.id],
+    queryFn: () => loadBookmarksByUser(me?.id),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+
+  const {
+    data: categoriesData,
+    error: categoriesError,
+    isLoading: categoriesIsLoading,
+  } = useQuery<Category[]>({
+    queryKey: [QueryKeys.LoadCategories],
+    queryFn: loadCategories,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+
+  const { mutate: bookmarkMutate } = useMutation({
+    mutationFn: bookmarkPost,
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to remove bookmark"
+      );
+    },
+  });
+
+  const [categoryOrder, setCategoryOrder] = useState<CategoryOrder | null>(
+    null
   );
 
   const handleOrderChange = (order: CategoryOrder) => {
@@ -63,36 +101,58 @@ function SavedTopicsContent() {
         setTopics((prev) =>
           [...prev].sort(
             (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           )
         );
         break;
       case CategoryOrder.MostLiked:
-        setTopics((prev) =>
-          [...prev].sort((a, b) => b.likes_count - a.likes_count)
-        );
+        setTopics((prev) => [...prev].sort((a, b) => b.likes - a.likes));
         break;
       case CategoryOrder.MostComments:
         setTopics((prev) =>
-          [...prev].sort((a, b) => b.comments_count - a.comments_count)
+          [...prev].sort((a, b) => b.commentsCount - a.commentsCount)
         );
         break;
     }
   };
 
   useEffect(() => {
-    // TODO: Show topics based on the current user saved topics
+    if (isLoading) return;
 
-    const filteredTopics = topicsMock.filter((topic: Topic) => {
-      if (searchParams.get("categoryId")) {
-        return topic.category_id === Number(searchParams.get("categoryId"));
-      }
-      return true; // If no categoryId is provided, return all topics
-    });
+    if (error) {
+      console.error("Error loading bookmarks:", error);
+      return;
+    }
+    if (!data || data.length === 0) {
+      setTopics([]);
+      return;
+    }
 
-    setTopics(filteredTopics);
-  }, [searchParams]);
+    setTopics(data);
+  }, [data, error, isLoading]);
+
+  if (isLoading || categoriesIsLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (error || categoriesError) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-600">
+          Error loading application, please try again later.{" "}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {(categoriesError || error) instanceof Error
+            ? (categoriesError || error)?.message
+            : "An unexpected error occurred."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <section className="p-8">
@@ -122,12 +182,12 @@ function SavedTopicsContent() {
           </div>
 
           <div className="gap-4 flex flex-col min-h-[400px]">
-            {topics.map((topic: Topic) => (
+            {topics.map((topic: PostCategory) => (
               <Link
                 key={topic.id}
                 href={`/topic/${topic.id}?categoryName=${encodeURIComponent(
-                  topic.category_name
-                )}&categoryId=${topic.category_id}&from=${pathname}`}
+                  topic.category.name
+                )}&categoryId=${topic.category.id}&from=${pathname}`}
               >
                 <Card className="hover:shadow-lg transition-shadow">
                   <div className="flex justify-between items-start">
@@ -135,13 +195,25 @@ function SavedTopicsContent() {
                       <CardHeader className="w-full">
                         <CardTitle>{topic.title}</CardTitle>
                       </CardHeader>
-                      <CardContent className="line-clamp-2 text-sm">
-                        {topic.content}
+                      <CardContent className="line-clamp-3 text-sm">
+                        <LexicalRenderer content={topic.content} />
                       </CardContent>
                     </div>
                     <div className="pr-2">
-                      <Button variant="outline">
-                        <Bookmark />
+                      <Button
+                        variant="outline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+
+                          bookmarkMutate({
+                            postId: topic.id,
+                            userId: me?.id,
+                            include: false,
+                          });
+                        }}
+                      >
+                        <BookmarkCheck className="text-orange-500" />
                       </Button>
                     </div>
                   </div>
@@ -150,21 +222,21 @@ function SavedTopicsContent() {
                       <div className="flex items-center gap-2 mb-2 md:mb-0">
                         <Avatar className="w-8 h-8">
                           <AvatarFallback className="font-medium">
-                            {topic.author.display_name[0]}
+                            {topic.author.firstName[0]}
                           </AvatarFallback>
                         </Avatar>
                         <p className="font-medium">
-                          {topic.author.display_name}
+                          {topic.author.firstName} {topic.author.lastName}
                         </p>
                       </div>
                       <div className="flex items-center md:items-center gap-2 text-xs text-gray-500">
                         <DotIcon className="text-gray-300 hidden md:block" />
                         <p className="text-xs text-gray-500">
-                          {dayjs(topic.created_at).format("MM/DD/YYYY")}
+                          {dayjs(topic.createdAt).format("MM/DD/YYYY")}
                         </p>
                         <DotIcon className="text-gray-300" />
                         <Badge variant="outline">
-                          <ClipboardListIcon /> {topic.category_name}
+                          <ClipboardListIcon /> {topic.category.name}
                         </Badge>
                       </div>
                     </div>
@@ -172,13 +244,13 @@ function SavedTopicsContent() {
                       <div className="flex items-center">
                         <ThumbsUpIcon className="h-4 w-4" />
                         <span className="ml-1 text-xs">
-                          {topic.likes_count} likes
+                          {topic.likes} likes
                         </span>
                       </div>
                       <div className="flex items-center">
                         <MessageCircle className="h-4 w-4" />
                         <span className="ml-1 text-xs">
-                          {topic.comments_count} comments
+                          {topic.commentsCount} comments
                         </span>
                       </div>
                     </div>
@@ -233,7 +305,7 @@ function SavedTopicsContent() {
           <p className="text-sm font-medium pb-4">Categories</p>
           <Select
             onValueChange={(value) => {
-              const category = categories.find(
+              const category = categoriesData?.find(
                 (cat: Category) => cat.name.toLowerCase() === value
               );
               if (category) {
@@ -252,7 +324,7 @@ function SavedTopicsContent() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((category: Category) => (
+              {categoriesData?.map((category: Category) => (
                 <SelectItem
                   key={category.id}
                   value={category.name.toLowerCase()}

@@ -1,7 +1,7 @@
 import { Author } from "./author";
 import { Category } from "./category";
 
-export type Post = {
+export type PostAuthor = {
   id: string;
   title: string;
   content: string;
@@ -9,6 +9,17 @@ export type Post = {
   createdAt: string;
   updatedAt: string;
   likes: number;
+  commentsCount: number;
 };
 
-export type PostCategory = Post & Category;
+export type PostCategory = {
+  id: string;
+  title: string;
+  content: string;
+  author: Author;
+  createdAt: string;
+  updatedAt: string;
+  likes: number;
+  category: Category
+  commentsCount: number;
+};

@@ -12,6 +12,7 @@ import {
   CheckIcon,
   ClipboardListIcon,
   Loader,
+  BookmarkCheck,
 } from "lucide-react";
 import dayjs from "dayjs";
 import {
@@ -39,16 +40,18 @@ import { Badge } from "~/components/ui/badge";
 import { NewTopic } from "~/components/new-topic";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { loadPostsByCategory, QueryKeys } from "~/core/api/queries";
-import { Post } from "~/types/post";
+import { PostAuthor } from "~/types/post";
 import { LexicalRenderer } from "~/components/lexical-renderer";
-import { createPost } from "~/core/api/mutations";
+import { bookmarkPost, createPost } from "~/core/api/mutations";
 import { toast } from "sonner";
+import { useMe } from "~/Contexts/meContext";
 
 export default function Page() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [topics, setTopics] = useState<Post[]>([]);
-  const { data, error, isLoading, refetch } = useQuery<Post[]>({
+  const { me, refetch: refetchMe } = useMe();
+  const [topics, setTopics] = useState<PostAuthor[]>([]);
+  const { data, error, isLoading, refetch } = useQuery<PostAuthor[]>({
     queryKey: [QueryKeys.LoadPostsByCategory, searchParams.get("categoryId")],
     queryFn: () => loadPostsByCategory(searchParams.get("categoryId") || ""), // Ensure categoryId is a string
     refetchOnWindowFocus: false,
@@ -57,6 +60,18 @@ export default function Page() {
 
   const { isError, isPending, mutate, isSuccess } = useMutation({
     mutationFn: createPost,
+  });
+
+  const { mutate: bookmarkMutate } = useMutation({
+    mutationFn: bookmarkPost,
+    onSuccess: () => {
+      refetchMe();
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to bookmark post"
+      );
+    },
   });
 
   const [categoryOrder, setCategoryOrder] = useState<CategoryOrder>(
@@ -91,11 +106,11 @@ export default function Page() {
       case CategoryOrder.MostLiked:
         setTopics((prev) => [...prev].sort((a, b) => b.likes - a.likes));
         break;
-      // case CategoryOrder.MostComments:
-      //   setTopics((prev) =>
-      //     [...prev].sort((a, b) => b.comments_count - a.comments_count)
-      //   );
-      //   break;
+      case CategoryOrder.MostComments:
+        setTopics((prev) =>
+          [...prev].sort((a, b) => b.commentsCount - a.commentsCount)
+        );
+        break;
     }
   };
 
@@ -174,7 +189,7 @@ export default function Page() {
           </div>
 
           <div className="gap-4 flex flex-col min-h-[400px]">
-            {topics.map((topic: Post) => (
+            {topics.map((topic: PostAuthor) => (
               <Link
                 key={topic.id}
                 href={`/topic/${topic.id}?categoryName=${encodeURIComponent(
@@ -194,8 +209,33 @@ export default function Page() {
                       </CardContent>
                     </div>
                     <div className="pr-2">
-                      <Button variant="outline">
-                        <Bookmark />
+                      <Button
+                        variant="outline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+
+                          if (me?.bookmarks.includes(topic.id)) {
+                            bookmarkMutate({
+                              postId: topic.id,
+                              userId: me?.id,
+                              include: false,
+                            });
+                            toast.success("Post removed from bookmarks.");
+                          } else {
+                            bookmarkMutate({
+                              postId: topic.id,
+                              userId: me?.id,
+                            });
+                            toast.success("Post saved to bookmarks.");
+                          }
+                        }}
+                      >
+                        {me?.bookmarks.includes(topic.id) ? (
+                          <BookmarkCheck className="text-orange-500" />
+                        ) : (
+                          <Bookmark />
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -229,7 +269,9 @@ export default function Page() {
                       </div>
                       <div className="flex items-center">
                         <MessageCircle className="h-4 w-4" />
-                        <span className="ml-1 text-xs">{0} comments</span>
+                        <span className="ml-1 text-xs">
+                          {topic.commentsCount} comments
+                        </span>
                       </div>
                     </div>
                   </CardFooter>
@@ -240,10 +282,12 @@ export default function Page() {
         </div>
         <div className="flex-2 pt-4 md:pl-4">
           <NewTopic
-            onSubmit={(data) => mutate({
-              ...data,
-              content: JSON.stringify(data.content)
-            })}
+            onSubmit={(data) =>
+              mutate({
+                ...data,
+                content: JSON.stringify(data.content),
+              })
+            }
             currentCategoryId={searchParams.get("categoryId") || undefined}
           />
           <Separator className="my-12" />

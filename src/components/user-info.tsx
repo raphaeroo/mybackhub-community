@@ -14,12 +14,12 @@ export function UserInfo() {
       <Avatar className="w-10 h-10">
         <AvatarFallback className="font-semibold">
           {/* {session.user?.name && session.user.name[0]} */}
-          R
+          E
         </AvatarFallback>
       </Avatar>
       <div>
-        <p className="font-normal">Raphael Freitas</p>
-        <p className="text-muted-foreground text-xs">raphael@example.com</p>
+        <p className="font-normal">Example User</p>
+        <p className="text-muted-foreground text-xs">example@mybackhub.com</p>
       </div>
     </div>
   );
