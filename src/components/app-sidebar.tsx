@@ -3,7 +3,7 @@ import { Home, LogOut, Edit, Bookmark, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { signOut, useSession } from "next-auth/react";
+import { signOut as nextAuthSignOut, useSession } from "next-auth/react";
 
 import {
   Sidebar,
@@ -55,6 +55,19 @@ export function AppSidebar() {
   const { status } = useSession();
   const { open } = useSidebar();
   const { activeName, setActiveName } = useActive();
+
+  const handleSignOut = async () => {
+    // Remove accessToken from localStorage
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("accessToken");
+    }
+    
+    // Sign out from NextAuth
+    await nextAuthSignOut({ redirect: false });
+    
+    // Redirect to main page
+    window.location.href = "https://mybackhub.com/";
+  };
 
   if (status !== "authenticated") {
     return null; // Don't render sidebar if not authenticated
@@ -134,7 +147,7 @@ export function AppSidebar() {
             asChild
             className="flex items-start justify-center"
           >
-            <Button variant="outline" onClick={() => signOut()}>
+            <Button variant="outline" onClick={handleSignOut}>
               <LogOut />
               <span>Logout</span>
             </Button>
