@@ -65,6 +65,16 @@ export function AppSidebar() {
     // Sign out from NextAuth
     await nextAuthSignOut({ redirect: false });
     
+    // Call SSO logout endpoint
+    try {
+      await fetch("https://sso.mybackhub.com/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Failed to logout from SSO:", error);
+    }
+    
     // Redirect to main page
     window.location.href = "https://mybackhub.com/";
   };
