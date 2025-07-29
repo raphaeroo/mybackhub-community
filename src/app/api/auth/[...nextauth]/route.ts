@@ -18,7 +18,7 @@ const authOptions: AuthOptions = {
           const params = new URLSearchParams({
             grant_type: "authorization_code",
             code: context.params.code!,
-            redirect_uri: context.provider.callbackUrl!,
+            redirect_uri: process.env.NEXT_PUBLIC_SSO_REDIRECT_URI!,
             client_id: context.provider.clientId!,
             client_secret: context.provider.clientSecret!,
             code_verifier: context.checks.code_verifier!,
@@ -72,11 +72,26 @@ const authOptions: AuthOptions = {
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
-    jwt: async ({ token, account }) => {
+    jwt: async ({ token, account, user }) => {
       if (account && account.access_token) {
         token.accessToken = account.access_token;
       }
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
+      }
       return token;
+    },
+    session: async ({ session, token }) => {
+      if (token) {
+        session.user = {
+          id: token.id as string,
+          email: token.email as string,
+          name: token.name as string,
+        };
+      }
+      return session;
     },
   },
   session: {
@@ -137,4 +152,4 @@ const authOptions: AuthOptions = {
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST, authOptions };

@@ -1,22 +1,13 @@
 import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
 
-export default withAuth(
-  function middleware(req) {
-    // If user is not authenticated, redirect to signin
-    if (!req.nextauth.token) {
-      const signInUrl = new URL("/api/auth/signin", req.url);
-      signInUrl.searchParams.set("callbackUrl", req.url);
-      return NextResponse.redirect(signInUrl);
-    }
-    return NextResponse.next();
+export default withAuth({
+  callbacks: {
+    authorized: ({ token }) => !!token,
   },
-  {
-    callbacks: {
-      authorized: () => true, // We handle authorization in the middleware function
-    },
-  }
-);
+  pages: {
+    signIn: "/api/auth/signin",
+  },
+});
 
 export const config = {
   matcher: [

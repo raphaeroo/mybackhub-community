@@ -3,6 +3,7 @@ import { Open_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 import "./globals.css";
 
@@ -63,7 +64,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
 
   return (
     <html lang="en" suppressHydrationWarning>
