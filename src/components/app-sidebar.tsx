@@ -1,6 +1,10 @@
 "use client";
 import { Home, LogOut, Edit, Bookmark, User } from "lucide-react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { signOut, useSession } from "next-auth/react";
+
 import {
   Sidebar,
   SidebarContent,
@@ -13,13 +17,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "~/components/ui/sidebar";
-import Image from "next/image";
+} from "./ui/sidebar";
 import { Button } from "./ui/button";
-import Link from "next/link";
-import { signOut } from "next-auth/react";
 import { Separator } from "./ui/separator";
-import { UserInfo } from "~/components/user-info";
+import { UserInfo } from "./user-info";
 import { useActive } from "~/Contexts/activeContext";
 
 // Menu items.
@@ -51,13 +52,13 @@ const moreApps = [
 
 export function AppSidebar() {
   const pathname = usePathname();
-  // const { status } = useSession();
+  const { status } = useSession();
   const { open } = useSidebar();
   const { activeName, setActiveName } = useActive();
 
-  // if (status !== "authenticated") {
-  //   return null; // Don't render sidebar if not authenticated
-  // }
+  if (status !== "authenticated") {
+    return null; // Don't render sidebar if not authenticated
+  }
 
   return (
     <Sidebar variant="inset" className="border-r m-0 bg-white">

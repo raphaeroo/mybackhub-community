@@ -1,5 +1,4 @@
 "use client";
-import { DialogContent, DialogDescription } from "@radix-ui/react-dialog";
 import {
   QueryObserverResult,
   RefetchOptions,
@@ -9,16 +8,10 @@ import {
 import { Loader } from "lucide-react";
 import { useState, createContext, useContext, useEffect } from "react";
 import { toast } from "sonner";
-import { Button } from "~/components/ui/button";
-import { Dialog, DialogHeader, DialogTitle } from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import { createUserByExternalId } from "~/core/api/mutations";
 import { fetchUserData, QueryKeys } from "~/core/api/queries";
+import { ssoFetchUserData, SSOQueryKeys, SSOUser } from "~/core/sso/queries";
 import { UserResponse } from "~/types/user";
-
-// const MOCK_USER_ID = "550e8400-e29b-41d4-a716-446655440000";
-const MOCK_USER_ID = "550e8400-e29b-41d4-a716-";
 
 interface MeContextType {
   me: UserResponse | null;
@@ -34,22 +27,31 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [me, setMe] = useState<UserResponse | null>(null);
-  const [userId, setUserId] = useState(
-    typeof window !== "undefined"
-      ? localStorage.getItem("externalId") || ''
-      : ""
-  ); // temporary,
-  const [userKnowsID, setUserKnowsID] = useState<boolean>(false);
-  // This is temporary, once the production is ready you will be able to register using the
-  const [requestUser, setRequestUser] = useState<boolean>(false);
+  
+  // Check localStorage for existing external ID
+  const [externalId, setExternalId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("externalId") || "";
+    }
+    return "";
+  });
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
+  // First, fetch SSO user data
+  const { data: ssoUserData, error: ssoUserError, isLoading: ssoUserLoading } = useQuery<SSOUser>({
+    queryKey: [SSOQueryKeys.UserData],
+    queryFn: ssoFetchUserData,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
 
+  // Use SSO user ID or stored external ID for fetching user data
+  const effectiveExternalId = ssoUserData?.id || externalId;
+
+  // Fetch user data only when we have an external ID
   const { data, error, isLoading, refetch } = useQuery<UserResponse>({
-    queryKey: [QueryKeys.UserData],
-    queryFn: () => fetchUserData(userId), // Replace with actual externalId
+    queryKey: [QueryKeys.UserData, effectiveExternalId],
+    queryFn: () => fetchUserData(effectiveExternalId),
+    enabled: !!effectiveExternalId,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
@@ -57,7 +59,11 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   const { mutate } = useMutation({
     mutationFn: createUserByExternalId,
     onSuccess: (user) => {
-      setUserId(user.externalId);
+      // Save external ID to localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("externalId", user.externalId);
+      }
+      setExternalId(user.externalId);
       refetch();
     },
     onError: (error) => {
@@ -71,24 +77,24 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (data) {
-      if (typeof window !== "undefined") {
+      // User exists, update local state and storage
+      if (typeof window !== "undefined" && data.externalId) {
         localStorage.setItem("externalId", data.externalId);
       }
       setMe(data);
-    } else if (error && !isLoading) {
-      // mutate({
-      //   externalId: MOCK_USER_ID,
-      //   username: "Guest",
-      //   email: "guest@example.com",
-      //   firstName: "Guest",
-      //   lastName: "User",
-      // });
-
-      setRequestUser(true); // TEMPORARY: Create workaround for QA validation
+    } else if (error && !isLoading && ssoUserData && effectiveExternalId === ssoUserData.id) {
+      // User doesn't exist but we have SSO data, create the user
+      mutate({
+        externalId: ssoUserData.id,
+        username: `${ssoUserData.firstName}_${ssoUserData.id}`,
+        email: ssoUserData.email,
+        firstName: ssoUserData.firstName,
+        lastName: ssoUserData.lastName,
+      });
     }
-  }, [data, isLoading, error]);
+  }, [data, isLoading, error, ssoUserData, effectiveExternalId, mutate]);
 
-  if (isLoading) {
+  if (isLoading || ssoUserLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader />
@@ -96,119 +102,17 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   }
 
-  if (error && !requestUser) {
+  if (error || ssoUserError) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-red-600">
           Error loading application, please try again later.{" "}
         </p>
         <p className="text-sm text-muted-foreground">
-          {error instanceof Error
-            ? error.message
+          {(error || ssoUserError) instanceof Error
+            ? (error || ssoUserError)?.message
             : "An unexpected error occurred."}
         </p>
-      </div>
-    );
-  }
-
-  if (requestUser) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Dialog open={requestUser}>
-          <DialogHeader>
-            <DialogTitle>Request User</DialogTitle>
-            <DialogDescription>
-              <p className="text-sm muted">
-                This is temporary, once the production is ready you will be able
-                to register using the SSO
-              </p>
-            </DialogDescription>
-            {error && !userKnowsID ? (
-              <DialogContent className="space-y-4">
-                <Label className="mt-6">First Name:</Label>
-                <Input
-                  value={firstName}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setFirstName(e.target.value);
-                  }}
-                />
-                <Label>Last Name:</Label>
-                <Input
-                  value={lastName}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setLastName(e.target.value);
-                  }}
-                />
-                <Label>Email Address:</Label>
-                <Input
-                  value={email}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setEmail(e.target.value);
-                  }}
-                />
-                <Button
-                  className="mr-6"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (firstName && lastName && email) {
-                      mutate({
-                        externalId: `${MOCK_USER_ID}${
-                          Math.floor(
-                            Math.random() * (999999999999 - 100000000000 + 1)
-                          ) + 100000000000
-                        }`,
-                        username: `${firstName.toLowerCase()}-${lastName.toLowerCase()}-${email}`,
-                        email,
-                        firstName,
-                        lastName,
-                      });
-                      setRequestUser(false);
-                    } else {
-                      toast.error("Please fill in all fields.");
-                    }
-                  }}
-                >
-                  Submit
-                </Button>
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setUserKnowsID(true);
-                  }}
-                >
-                  I have an ID
-                </Button>
-              </DialogContent>
-            ) : (
-              <DialogContent className="space-y-4">
-                <Label className="mt-6">User ID:</Label>
-                <Input
-                  value={userId}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setUserId(e.target.value);
-                  }}
-                />
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (userId) {
-                      refetch();
-                      setRequestUser(false);
-                    } else {
-                      toast.error("Please enter a valid User ID.");
-                    }
-                  }}
-                >
-                  Fetch User
-                </Button>
-              </DialogContent>
-            )}
-          </DialogHeader>
-        </Dialog>
       </div>
     );
   }
