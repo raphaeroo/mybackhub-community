@@ -58,11 +58,6 @@ export function AppSidebar() {
   const { activeName, setActiveName } = useActive();
 
   const handleSignOut = async () => {
-    // Remove accessToken from localStorage
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("accessToken");
-    }
-    
     // Sign out from NextAuth
     await nextAuthSignOut({ redirect: false });
     
@@ -74,6 +69,11 @@ export function AppSidebar() {
 
     } catch (error) {
       console.error("Failed to logout from SSO:", error);
+    }
+
+    // Remove accessToken from localStorage
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("accessToken");
     }
     
     // Redirect to main page
