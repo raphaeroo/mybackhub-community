@@ -63,13 +63,20 @@ export function AppSidebar() {
   return (
     <Sidebar variant="inset" className="border-r m-0 bg-white">
       <SidebarHeader className="items-center justify-center py-4 bg-white">
-        <div className="flex justify-center items-center">
-          {open ? (
-            <Image src="/mbh-logo.png" alt="Logo" width={179} height={32} />
-          ) : (
-            <Image src="/mbh-logo-icon.png" alt="Logo" width={24} height={24} />
-          )}
-        </div>
+        <Link href="https://platform.mybackhub.com/" passHref>
+          <div className="flex justify-center items-center">
+            {open ? (
+              <Image src="/mbh-logo.png" alt="Logo" width={179} height={32} />
+            ) : (
+              <Image
+                src="/mbh-logo-icon.png"
+                alt="Logo"
+                width={24}
+                height={24}
+              />
+            )}
+          </div>
+        </Link>
       </SidebarHeader>
       <Separator />
       <SidebarContent className="bg-white">
