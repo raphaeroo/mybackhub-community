@@ -22,6 +22,7 @@ import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { UserInfo } from "./user-info";
 import { useActive } from "~/Contexts/activeContext";
+import { SSO_API } from "~/core/api";
 
 // Menu items.
 const items = [
@@ -67,10 +68,10 @@ export function AppSidebar() {
     
     // Call SSO logout endpoint
     try {
-      await fetch("https://sso.mybackhub.com/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
+      await SSO_API.post("/auth/logout", {}, {
+        withCredentials: true,
       });
+
     } catch (error) {
       console.error("Failed to logout from SSO:", error);
     }
