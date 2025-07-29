@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
-// import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 
 import "./globals.css";
 
-// import SessionProvider from "~/providers/SessionProvider";
+import SessionProvider from "~/providers/SessionProvider";
 import QueryClientProvider from "~/providers/QueryProvider";
 import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/app-sidebar";
@@ -63,14 +63,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const session = await getServerSession();
+  const session = await getServerSession();
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${openSans.variable} ${gotham.variable} antialiased font-mono`}
       >
-        {/* <SessionProvider session={session}> */}
+        <SessionProvider session={session}>
         <SidebarProvider>
           <ActiveProvider>
             <AppSidebar />
@@ -85,7 +85,7 @@ export default async function RootLayout({
           </main>
         </SidebarProvider>
         <Toaster />
-        {/* </SessionProvider> */}
+        </SessionProvider>
       </body>
     </html>
   );
