@@ -51,11 +51,21 @@ SSO_API.interceptors.request.use(
 
 SSO_API.interceptors.response.use(
   (response) => response, // Directly return successful responses.
-  (error) => {
+  async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; // Mark the request as retried to avoid infinite loops.
-      signOut();
+      
+      // Clear the stored access token
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+      }
+      
+      // Sign out and redirect to login
+      await signOut({ callbackUrl: "/api/auth/signin" });
+      
+      // Return a rejected promise to stop further processing
+      return Promise.reject(error);
     }
     return Promise.reject(error); // For all other errors, return the error as is.
   }
