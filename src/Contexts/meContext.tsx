@@ -8,6 +8,7 @@ import {
 import { Loader } from "lucide-react";
 import { useState, createContext, useContext, useEffect } from "react";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 import { createUserByExternalId } from "~/core/api/mutations";
 import { fetchUserData, QueryKeys } from "~/core/api/queries";
 import { ssoFetchUserData, SSOQueryKeys, SSOUser } from "~/core/sso/queries";
@@ -27,6 +28,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [me, setMe] = useState<UserResponse | null>(null);
+  const { status } = useSession();
   
   // Check localStorage for existing external ID
   const [externalId, setExternalId] = useState<string>(() => {
@@ -36,10 +38,11 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
     return "";
   });
 
-  // First, fetch SSO user data
+  // First, fetch SSO user data only if authenticated
   const { data: ssoUserData, error: ssoUserError, isLoading: ssoUserLoading } = useQuery<SSOUser>({
     queryKey: [SSOQueryKeys.UserData],
     queryFn: ssoFetchUserData,
+    enabled: status === "authenticated",
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
@@ -93,6 +96,15 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
       });
     }
   }, [data, isLoading, error, ssoUserData, effectiveExternalId, mutate]);
+
+  // Don't show loading/error states if user is not authenticated
+  if (status === "unauthenticated" || status === "loading") {
+    return (
+      <MeContext.Provider value={{ me: null, setMe, refetch }}>
+        {children}
+      </MeContext.Provider>
+    );
+  }
 
   if (isLoading || ssoUserLoading) {
     return (
