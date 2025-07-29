@@ -1,5 +1,5 @@
 "use client";
-import { Home, LogOut, Edit, Bookmark, User } from "lucide-react";
+import { Home, LogOut, Edit, Bookmark, BookUser } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -47,7 +47,7 @@ const moreApps = [
   {
     title: "Account",
     url: "https://account.mybackhub.com/",
-    icon: User,
+    icon: BookUser,
   },
 ];
 
