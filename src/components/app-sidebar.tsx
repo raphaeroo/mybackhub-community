@@ -156,7 +156,7 @@ export function AppSidebar() {
         <div className="px-16 mb-4">
           <SidebarMenuButton
             asChild
-            className="flex items-start justify-center"
+            className="flex items-center justify-center"
           >
             <Button variant="outline" onClick={handleSignOut}>
               <LogOut />
