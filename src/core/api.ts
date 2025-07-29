@@ -24,15 +24,20 @@ SSO_API.interceptors.request.use(
     let accessToken = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
     if (!accessToken) {
-      const response = await fetch("/api/auth/token");
-      const { token } = await response.json();
-
-      if (!token) {
-        signOut();
-        throw new Error("No access token found");
+      try {
+        const response = await fetch("/api/auth/token");
+        const { token } = await response.json();
+        
+        if (token) {
+          accessToken = token;
+          if (typeof window !== "undefined") {
+            localStorage.setItem("accessToken", token);
+          }
+        }
+      } catch (error) {
+        // Don't sign out here - let the response interceptor handle 401s
+        console.error("Failed to fetch access token:", error);
       }
-
-      accessToken = token;
     }
 
     if (accessToken) {
