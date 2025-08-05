@@ -37,7 +37,7 @@ export const EmojiPicker = () => {
           <SmileIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="p-0 max-h-[400px] overflow-auto">
+      <DropdownMenuContent className="p-0 max-h-[350px] overflow-clip">
         <Picker 
           data={data} 
           onEmojiSelect={onEmojiSelect} 
