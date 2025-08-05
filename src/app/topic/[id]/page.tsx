@@ -54,7 +54,7 @@ export default function Page({}) {
 
   const postLiked = useMemo(() => {
     if (!me?.postsLiked) {
-      return [];
+      return false;
     }
     return me?.postsLiked.includes(postId);
   }, [me?.postsLiked, postId]);
@@ -410,7 +410,7 @@ export default function Page({}) {
             onClick={() => likePostMutate()}
           >
             <ThumbsUpIcon className="h-4 w-4" />
-            Like
+            {postLiked ? 'Liked' : 'Like'}
           </Button>
           <Button variant="outline">
             <BookmarkIcon className="h-4 w-4" />
