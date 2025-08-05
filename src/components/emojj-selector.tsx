@@ -13,14 +13,20 @@ import { useCallback } from "react";
 import { editorRef } from "~/utils";
 
 export const EmojiPicker = () => {
-  const onEmojiSelect = useCallback((emoji: { native: string }) => {
+  const onEmojiSelect = useCallback((emoji: { native?: string } | string) => {
     if (editorRef.current) {
       editorRef.current.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
-          selection.insertNodes([$createTextNode(emoji.native)]);
+          // Handle both direct emoji object and search result format
+          const emojiChar = typeof emoji === 'string' ? emoji : emoji.native || '';
+          if (emojiChar) {
+            selection.insertNodes([$createTextNode(emojiChar)]);
+          }
         }
       });
+      // Focus back to editor after emoji insertion
+      editorRef.current.focus();
     }
   }, []);
 
@@ -31,8 +37,15 @@ export const EmojiPicker = () => {
           <SmileIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="p-0">
-        <Picker data={data} onEmojiSelect={onEmojiSelect} theme="light"  />
+      <DropdownMenuContent className="p-0 max-h-[400px] overflow-auto">
+        <Picker 
+          data={data} 
+          onEmojiSelect={onEmojiSelect} 
+          theme="light" 
+          searchPosition="sticky"
+          previewPosition="none"
+          skinTonePosition="none"
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );
