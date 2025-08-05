@@ -129,3 +129,14 @@ export const bookmarkPost = async ({
     );
   }
 };
+
+export const updateUser = async (userId: string, userData: Partial<CreateUser>) => {
+  try {
+    const { data } = await APP_API.put<UserResponse>(`/users/${userId}`, userData);
+    return data;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to update user"
+    );
+  }
+}

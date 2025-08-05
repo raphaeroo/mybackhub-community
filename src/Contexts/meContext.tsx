@@ -6,10 +6,10 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import { useState, createContext, useContext, useEffect } from "react";
+import { useState, createContext, useContext, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { createUserByExternalId } from "~/core/api/mutations";
+import { createUserByExternalId, updateUser, CreateUser } from "~/core/api/mutations";
 import { fetchUserData, QueryKeys } from "~/core/api/queries";
 import { ssoFetchUserData, SSOQueryKeys, SSOUser } from "~/core/sso/queries";
 import { UserResponse } from "~/types/user";
@@ -59,7 +59,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
     refetchOnMount: false,
   });
 
-  const { mutate } = useMutation({
+  const { mutate, isPending: isCreatingUser } = useMutation({
     mutationFn: createUserByExternalId,
     onSuccess: (user) => {
       // Save external ID to localStorage
@@ -78,9 +78,43 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   });
 
+  const { mutate: updateUserMutate } = useMutation({
+    mutationFn: ({ userId, userData }: { userId: string; userData: Partial<CreateUser> }) =>
+      updateUser(userId, userData),
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Failed to sync user data:", error);
+      // Silently fail user sync, don't show error to user unless critical
+    },
+  });
+
+  // Function to check if SSO data differs from backend data
+  const shouldUpdateUser = useCallback((ssoData: SSOUser, backendData: UserResponse): boolean => {
+    return (
+      ssoData.firstName !== backendData.firstName ||
+      ssoData.lastName !== backendData.lastName ||
+      ssoData.email !== backendData.email
+    );
+  }, []);
+
   useEffect(() => {
-    if (data) {
-      // User exists, update local state and storage
+    if (data && ssoUserData) {
+      // User exists, check if SSO data differs from backend data
+      if (shouldUpdateUser(ssoUserData, data)) {
+        // SSO data is newer, update backend
+        updateUserMutate({
+          userId: data.id,
+          userData: {
+            firstName: ssoUserData.firstName,
+            lastName: ssoUserData.lastName,
+            email: ssoUserData.email,
+          },
+        });
+      }
+      
+      // Update local state and storage
       if (typeof window !== "undefined" && data.externalId) {
         localStorage.setItem("externalId", data.externalId);
       }
@@ -94,8 +128,14 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
         firstName: ssoUserData.firstName,
         lastName: ssoUserData.lastName,
       });
+    } else if (data && !ssoUserData) {
+      // Only backend data available, use it
+      if (typeof window !== "undefined" && data.externalId) {
+        localStorage.setItem("externalId", data.externalId);
+      }
+      setMe(data);
     }
-  }, [data, isLoading, error, ssoUserData, effectiveExternalId, mutate]);
+  }, [data, isLoading, error, ssoUserData, effectiveExternalId, mutate, updateUserMutate, shouldUpdateUser]);
 
   // Don't show loading/error states if user is not authenticated
   if (status === "unauthenticated" || status === "loading") {
@@ -106,7 +146,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   }
 
-  if (isLoading || ssoUserLoading) {
+  if (isLoading || ssoUserLoading || isCreatingUser) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader />
@@ -114,7 +154,10 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   }
 
-  if (error || ssoUserError) {
+  // Only show error if SSO fails or if backend fails AND we're not in the middle of creating a user
+  const shouldShowError = ssoUserError || (error && !ssoUserData && !ssoUserLoading && !isCreatingUser);
+  
+  if (shouldShowError) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-red-600">
