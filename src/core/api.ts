@@ -1,5 +1,6 @@
 import axios from "axios";
 import { signOut } from "next-auth/react";
+import { authService } from "./auth";
 
 const SSO_API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SSO_BASE_URL,
@@ -20,13 +21,16 @@ const APP_API = axios.create({
 
 SSO_API.interceptors.request.use(
   async (config) => {
-    let accessToken = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    let accessToken =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
 
     if (!accessToken) {
       try {
         const response = await fetch("/api/auth/token");
         const { token } = await response.json();
-        
+
         if (token) {
           accessToken = token;
           if (typeof window !== "undefined") {
@@ -34,7 +38,6 @@ SSO_API.interceptors.request.use(
           }
         }
       } catch (error) {
-        // Don't sign out here - let the response interceptor handle 401s
         console.error("Failed to fetch access token:", error);
       }
     }
@@ -49,25 +52,80 @@ SSO_API.interceptors.request.use(
   }
 );
 
+APP_API.interceptors.request.use(
+  async (config) => {
+    const token = authService.getStoredToken();
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    } else {
+      const externalId = localStorage.getItem("externalId");
+      if (externalId) {
+        try {
+          await authService.getToken(externalId);
+          const newToken = authService.getStoredToken();
+          if (newToken) {
+            config.headers["Authorization"] = `Bearer ${newToken}`;
+          }
+        } catch (error) {
+          console.error("Failed to refresh token:", error);
+          // await signOut({ callbackUrl: "/api/auth/signin" });
+        }
+      }
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 SSO_API.interceptors.response.use(
-  (response) => response, // Directly return successful responses.
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Mark the request as retried to avoid infinite loops.
-      
-      // Clear the stored access token
+      originalRequest._retry = true;
+
       if (typeof window !== "undefined") {
         localStorage.removeItem("accessToken");
       }
-      
-      // Sign out and redirect to login
+
       await signOut({ callbackUrl: "/api/auth/signin" });
-      
-      // Return a rejected promise to stop further processing
       return Promise.reject(error);
     }
-    return Promise.reject(error); // For all other errors, return the error as is.
+    return Promise.reject(error);
+  }
+);
+
+APP_API.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      let externalId: string | null = null;
+      if (typeof window !== "undefined") {
+        externalId = localStorage.getItem("externalId");
+      }
+
+      if (externalId) {
+        try {
+          await authService.refreshToken();
+          const token = authService.getStoredToken();
+          if (token) {
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+            return APP_API(originalRequest);
+          }
+        } catch (refreshError) {
+          console.error("Token refresh failed:", refreshError);
+          authService.logout();
+          await signOut({ callbackUrl: "/api/auth/signin" });
+        }
+      }
+    }
+    return Promise.reject(error);
   }
 );
 

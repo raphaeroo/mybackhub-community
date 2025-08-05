@@ -6,10 +6,20 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import { useState, createContext, useContext, useEffect, useCallback } from "react";
+import {
+  useState,
+  createContext,
+  useContext,
+  useEffect,
+  useCallback,
+} from "react";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { createUserByExternalId, updateUser, CreateUser } from "~/core/api/mutations";
+import {
+  createUserByExternalId,
+  updateUser,
+  CreateUser,
+} from "~/core/api/mutations";
 import { fetchUserData, QueryKeys } from "~/core/api/queries";
 import { ssoFetchUserData, SSOQueryKeys, SSOUser } from "~/core/sso/queries";
 import { UserResponse } from "~/types/user";
@@ -29,7 +39,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [me, setMe] = useState<UserResponse | null>(null);
   const { status } = useSession();
-  
+
   // Check localStorage for existing external ID
   const [externalId, setExternalId] = useState<string>(() => {
     if (typeof window !== "undefined") {
@@ -39,7 +49,11 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   // First, fetch SSO user data only if authenticated
-  const { data: ssoUserData, error: ssoUserError, isLoading: ssoUserLoading } = useQuery<SSOUser>({
+  const {
+    data: ssoUserData,
+    error: ssoUserError,
+    isLoading: ssoUserLoading,
+  } = useQuery<SSOUser>({
     queryKey: [SSOQueryKeys.UserData],
     queryFn: ssoFetchUserData,
     enabled: status === "authenticated",
@@ -49,6 +63,10 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Use SSO user ID or stored external ID for fetching user data
   const effectiveExternalId = ssoUserData?.id || externalId;
+
+  if (typeof window !== "undefined" && effectiveExternalId) {
+    localStorage.setItem("externalId", effectiveExternalId);
+  }
 
   // Fetch user data only when we have an external ID
   const { data, error, isLoading, refetch } = useQuery<UserResponse>({
@@ -61,12 +79,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const { mutate, isPending: isCreatingUser } = useMutation({
     mutationFn: createUserByExternalId,
-    onSuccess: (user) => {
-      // Save external ID to localStorage
-      if (typeof window !== "undefined") {
-        localStorage.setItem("externalId", user.externalId);
-      }
-      setExternalId(user.externalId);
+    onSuccess: () => {
       refetch();
     },
     onError: (error) => {
@@ -79,8 +92,13 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   const { mutate: updateUserMutate } = useMutation({
-    mutationFn: ({ userId, userData }: { userId: string; userData: Partial<CreateUser> }) =>
-      updateUser(userId, userData),
+    mutationFn: ({
+      userId,
+      userData,
+    }: {
+      userId: string;
+      userData: Partial<CreateUser>;
+    }) => updateUser(userId, userData),
     onSuccess: () => {
       refetch();
     },
@@ -91,13 +109,16 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   // Function to check if SSO data differs from backend data
-  const shouldUpdateUser = useCallback((ssoData: SSOUser, backendData: UserResponse): boolean => {
-    return (
-      ssoData.firstName !== backendData.firstName ||
-      ssoData.lastName !== backendData.lastName ||
-      ssoData.email !== backendData.email
-    );
-  }, []);
+  const shouldUpdateUser = useCallback(
+    (ssoData: SSOUser, backendData: UserResponse): boolean => {
+      return (
+        ssoData.firstName !== backendData.firstName ||
+        ssoData.lastName !== backendData.lastName ||
+        ssoData.email !== backendData.email
+      );
+    },
+    []
+  );
 
   useEffect(() => {
     if (data && ssoUserData) {
@@ -113,13 +134,15 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
           },
         });
       }
-      
-      // Update local state and storage
-      if (typeof window !== "undefined" && data.externalId) {
-        localStorage.setItem("externalId", data.externalId);
-      }
+
+      setExternalId(data.id);
       setMe(data);
-    } else if (error && !isLoading && ssoUserData && effectiveExternalId === ssoUserData.id) {
+    } else if (
+      error &&
+      !isLoading &&
+      ssoUserData &&
+      effectiveExternalId === ssoUserData.id
+    ) {
       // User doesn't exist but we have SSO data, create the user
       mutate({
         externalId: ssoUserData.id,
@@ -129,13 +152,19 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
         lastName: ssoUserData.lastName,
       });
     } else if (data && !ssoUserData) {
-      // Only backend data available, use it
-      if (typeof window !== "undefined" && data.externalId) {
-        localStorage.setItem("externalId", data.externalId);
-      }
+      setExternalId(data.id);
       setMe(data);
     }
-  }, [data, isLoading, error, ssoUserData, effectiveExternalId, mutate, updateUserMutate, shouldUpdateUser]);
+  }, [
+    data,
+    isLoading,
+    error,
+    ssoUserData,
+    effectiveExternalId,
+    mutate,
+    updateUserMutate,
+    shouldUpdateUser,
+  ]);
 
   // Don't show loading/error states if user is not authenticated
   if (status === "unauthenticated" || status === "loading") {
@@ -155,8 +184,10 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   // Only show error if SSO fails or if backend fails AND we're not in the middle of creating a user
-  const shouldShowError = ssoUserError || (error && !ssoUserData && !ssoUserLoading && !isCreatingUser);
-  
+  const shouldShowError =
+    ssoUserError ||
+    (error && !ssoUserData && !ssoUserLoading && !isCreatingUser);
+
   if (shouldShowError) {
     return (
       <div className="flex items-center justify-center h-screen">

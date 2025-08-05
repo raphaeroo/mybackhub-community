@@ -34,6 +34,7 @@ export const fetchUserData = async (externalId: string) => {
   }
 };
 
+
 export const loadCategories = async () => {
   try {
     const { data } = await APP_API.get<Category[]>("/categories");
@@ -103,7 +104,9 @@ export const loadBookmarksByUser = async (userId?: string) => {
     return data;
   } catch (error) {
     throw new Error(
-      error instanceof Error ? error.message : "Failed to load bookmarks by user"
+      error instanceof Error
+        ? error.message
+        : "Failed to load bookmarks by user"
     );
   }
 };
