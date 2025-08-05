@@ -18,7 +18,7 @@ export const nodes: ReadonlyArray<Klass<LexicalNode> | LexicalNodeReplacement> =
     QuoteNode,
     ListNode,
     ListItemNode,
+    LinkNode,
     AutoLinkNode,
     EmojiNode,
-    LinkNode,
   ];

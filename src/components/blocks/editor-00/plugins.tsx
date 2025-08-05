@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 
 import { ContentEditable } from "../../editor/editor-ui/content-editable";
 import { ToolbarPlugin } from "../../editor/plugins/toolbar/toolbar-plugin";
@@ -58,7 +60,10 @@ export function Plugins() {
           contentEditable={
             <div className="">
               <div className="" ref={onRef}>
-                <ContentEditable placeholder={"Start typing ..."} />
+                <ContentEditable
+                  placeholder={"Start typing ..."}
+                  className="ContentEditable__root relative block h-72 min-h-72 min-h-full overflow-auto px-8 py-4 focus:outline-none"
+                />
               </div>
             </div>
           }
@@ -69,9 +74,12 @@ export function Plugins() {
         <EmojisPlugin />
         <EmojiPickerPlugin />
 
-        <LinkPlugin />
+        <ListPlugin />
+        <CheckListPlugin />
+
         <ClickableLinkPlugin newTab />
         <AutoLinkPlugin />
+        <LinkPlugin />
 
         <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} />
 
