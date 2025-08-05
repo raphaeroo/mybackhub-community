@@ -221,9 +221,9 @@ export default function Page({}) {
                 <span>{comment.likes}</span>
               </Button>
               {comment.parentComment === null && (
-                <div>
+                <div className="flex-1">
                   {replyToCommentId === comment.id ? (
-                    <div className="flex items-start md:items-center gap-2 flex-col md:flex-row">
+                    <div className="flex w-full items-start md:items-center gap-2 flex-col md:flex-row">
                       <Input
                         className="w-full"
                         autoFocus
