@@ -1,6 +1,6 @@
 "use client";
 import { Suspense, useCallback, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Bookmark,
   DotIcon,
@@ -55,6 +55,9 @@ function MyTopicsContent() {
   const { me, refetch: refetchMe } = useMe();
 
   const [topics, setTopics] = useState<PostCategory[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("categoryId");
   const { data, error, isLoading, refetch } = useQuery<PostCategory[]>({
     queryKey: [QueryKeys.LoadPostByUser, me?.id],
     queryFn: () => loadPostByUser(me?.id),
@@ -133,9 +136,27 @@ function MyTopicsContent() {
 
   useEffect(() => {
     if (!isLoading && data) {
-      setTopics(data);
+      let filteredTopics = data;
+      
+      // Filter by category if categoryId is present
+      if (categoryId && categoryId !== "all") {
+        filteredTopics = data.filter(
+          (topic) => topic.category.id.toString() === categoryId
+        );
+      }
+      
+      // Filter by search term
+      if (searchTerm) {
+        filteredTopics = filteredTopics.filter(
+          (topic) =>
+            topic.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            topic.content.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+      
+      setTopics(filteredTopics);
     }
-  }, [isLoading, data]);
+  }, [isLoading, data, categoryId, searchTerm]);
 
   if (isLoading || categoriesIsLoading) {
     return (
@@ -181,6 +202,8 @@ function MyTopicsContent() {
                 placeholder="Search topics..."
                 className="w-full"
                 type="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <p>Listing {topics.length} topics</p>
@@ -259,7 +282,7 @@ function MyTopicsContent() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 font-medium mt-4 md:mt-0">
-                      <div className="flex items-center">
+                      <div className={`flex items-center ${me?.postsLiked?.includes(topic.id) ? "text-primary" : ""}`}>
                         <ThumbsUpIcon className="h-4 w-4" />
                         <span className="ml-1 text-xs">
                           {topic.likes} likes
@@ -332,18 +355,27 @@ function MyTopicsContent() {
           <Separator className="my-12" />
           <p className="text-sm font-medium pb-4">Categories</p>
           <Select
+            value={
+              categoryId
+                ? categoriesData?.find(
+                    (cat: Category) => cat.id.toString() === categoryId
+                  )?.name.toLowerCase() || "all"
+                : "all"
+            }
             onValueChange={(value) => {
-              const category = categoriesData?.find(
-                (cat: Category) => cat.name.toLowerCase() === value
-              );
-              if (category) {
-                router.push(
-                  pathname +
-                    "?" +
-                    createQueryString("categoryId", category.id.toString())
-                );
-              } else {
+              if (value === "all") {
                 router.push(pathname);
+              } else {
+                const category = categoriesData?.find(
+                  (cat: Category) => cat.name.toLowerCase() === value
+                );
+                if (category) {
+                  router.push(
+                    pathname +
+                      "?" +
+                      createQueryString("categoryId", category.id.toString())
+                  );
+                }
               }
             }}
           >

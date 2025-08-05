@@ -51,6 +51,7 @@ export default function Page() {
   const pathname = usePathname();
   const { me, refetch: refetchMe } = useMe();
   const [topics, setTopics] = useState<PostAuthor[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const { data, error, isLoading, refetch } = useQuery<PostAuthor[]>({
     queryKey: [QueryKeys.LoadPostsByCategory, searchParams.get("categoryId")],
     queryFn: () => loadPostsByCategory(searchParams.get("categoryId") || ""), // Ensure categoryId is a string
@@ -116,9 +117,20 @@ export default function Page() {
 
   useEffect(() => {
     if (!isLoading && data) {
-      setTopics(data);
+      let filteredTopics = data;
+      
+      // Filter by search term
+      if (searchTerm) {
+        filteredTopics = data.filter(
+          (topic) =>
+            topic.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            topic.content.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+      
+      setTopics(filteredTopics);
     }
-  }, [isLoading, data]);
+  }, [isLoading, data, searchTerm]);
 
   if (isLoading || isPending) {
     return (
@@ -183,6 +195,8 @@ export default function Page() {
                 placeholder="Search topics..."
                 className="w-full"
                 type="search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <p>Listing {topics.length} topics</p>
@@ -261,7 +275,7 @@ export default function Page() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 font-medium mt-4 md:mt-0">
-                      <div className="flex items-center">
+                      <div className={`flex items-center ${me?.postsLiked?.includes(topic.id) ? "text-primary" : ""}`}>
                         <ThumbsUpIcon className="h-4 w-4" />
                         <span className="ml-1 text-xs">
                           {topic.likes} likes
