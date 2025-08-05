@@ -1,7 +1,8 @@
-import { $isListNode, ListNode } from "@lexical/list"
+import { $isListNode, ListNode, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from "@lexical/list"
 import { $isHeadingNode } from "@lexical/rich-text"
 import { $findMatchingParent, $getNearestNodeOfType } from "@lexical/utils"
-import { $isRangeSelection, $isRootOrShadowRoot, BaseSelection } from "lexical"
+import { $isRangeSelection, $isRootOrShadowRoot, BaseSelection, $getSelection, $createParagraphNode } from "lexical"
+import { $setBlocksType } from "@lexical/selection"
 
 import { useToolbarContext } from "../../../editor/context/toolbar-context"
 import { useUpdateToolbarHandler } from "../../../editor/editor-hooks/use-update-toolbar"
@@ -63,12 +64,40 @@ export function BlockFormatDropDown({
 
   useUpdateToolbarHandler($updateToolbar)
 
+  const formatParagraph = () => {
+    activeEditor.update(() => {
+      const selection = $getSelection()
+      if ($isRangeSelection(selection)) {
+        $setBlocksType(selection, () => $createParagraphNode())
+      }
+    })
+  }
+
+  const handleFormatChange = (value: string) => {
+    setBlockType(value as keyof typeof blockTypeToBlockName)
+    
+    // Apply the actual format change
+    if (value === "paragraph") {
+      formatParagraph()
+    } else if (value === "bullet") {
+      if (blockType !== "bullet") {
+        activeEditor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)
+      } else {
+        formatParagraph()
+      }
+    } else if (value === "number") {
+      if (blockType !== "number") {
+        activeEditor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)
+      } else {
+        formatParagraph()
+      }
+    }
+  }
+
   return (
     <Select
       value={blockType}
-      onValueChange={(value) => {
-        setBlockType(value as keyof typeof blockTypeToBlockName)
-      }}
+      onValueChange={handleFormatChange}
     >
       <SelectTrigger className="!h-8 w-min gap-1">
         {blockTypeToBlockName[blockType].icon}
