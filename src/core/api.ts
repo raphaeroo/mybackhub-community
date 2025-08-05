@@ -1,6 +1,6 @@
 import axios from "axios";
 import { signOut } from "next-auth/react";
-import { authService } from "./auth";
+import { authService, UserInfo } from "./auth";
 
 const SSO_API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SSO_BASE_URL,
@@ -54,23 +54,46 @@ SSO_API.interceptors.request.use(
 
 APP_API.interceptors.request.use(
   async (config) => {
-    const token = authService.getStoredToken();
+    let token = authService.getStoredToken();
+    
+    // If we don't have a token, try to get one
+    if (!token) {
+      const externalId = localStorage.getItem("externalId");
+      const ssoToken = localStorage.getItem("accessToken");
+      
+      if (externalId) {
+        // First, try to get SSO user info if we have an SSO token
+        let ssoUserInfo: UserInfo | null = null;
+        if (ssoToken) {
+          try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SSO_BASE_URL}/users/me`, {
+              headers: {
+                'Authorization': `Bearer ${ssoToken}`,
+              },
+            });
+            if (response.ok) {
+              const ssoData = await response.json();
+              ssoUserInfo = {
+                id: ssoData.id,
+                externalId: ssoData.id,
+                email: ssoData.email,
+                firstName: ssoData.firstName,
+                lastName: ssoData.lastName,
+              };
+            }
+          } catch (error) {
+            console.error("Failed to fetch SSO user info:", error);
+          }
+        }
+        
+        // Try to get a valid token, potentially creating the user if needed
+        token = await authService.getValidToken(externalId, ssoUserInfo || undefined);
+      }
+    }
+    
+    // Add the token to the request if we have one
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
-    } else {
-      const externalId = localStorage.getItem("externalId");
-      if (externalId) {
-        try {
-          await authService.getToken(externalId);
-          const newToken = authService.getStoredToken();
-          if (newToken) {
-            config.headers["Authorization"] = `Bearer ${newToken}`;
-          }
-        } catch (error) {
-          console.error("Failed to refresh token:", error);
-          // await signOut({ callbackUrl: "/api/auth/signin" });
-        }
-      }
     }
 
     return config;
@@ -102,18 +125,50 @@ APP_API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    
+    // Only retry once for 401 errors
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      let externalId: string | null = null;
-      if (typeof window !== "undefined") {
-        externalId = localStorage.getItem("externalId");
-      }
+      const externalId = typeof window !== "undefined" ? localStorage.getItem("externalId") : null;
+      const ssoToken = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
       if (externalId) {
         try {
+          // First try to refresh the token
           await authService.refreshToken();
-          const token = authService.getStoredToken();
+          let token = authService.getStoredToken();
+          
+          // If refresh failed, try to get a new token
+          if (!token) {
+            // Get SSO user info if we have an SSO token
+            let ssoUserInfo: UserInfo | null = null;
+            if (ssoToken) {
+              try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_SSO_BASE_URL}/users/me`, {
+                  headers: {
+                    'Authorization': `Bearer ${ssoToken}`,
+                  },
+                });
+                if (response.ok) {
+                  const ssoData = await response.json();
+                  ssoUserInfo = {
+                    id: ssoData.id,
+                    externalId: ssoData.id,
+                    email: ssoData.email,
+                    firstName: ssoData.firstName,
+                    lastName: ssoData.lastName,
+                  };
+                }
+              } catch (error) {
+                console.error("Failed to fetch SSO user info:", error);
+              }
+            }
+            
+            // Get a new token, potentially creating the user
+            token = await authService.getValidToken(externalId, ssoUserInfo || undefined);
+          }
+          
           if (token) {
             originalRequest.headers["Authorization"] = `Bearer ${token}`;
             return APP_API(originalRequest);
@@ -121,7 +176,11 @@ APP_API.interceptors.response.use(
         } catch (refreshError) {
           console.error("Token refresh failed:", refreshError);
           authService.logout();
-          await signOut({ callbackUrl: "/api/auth/signin" });
+          
+          // Only sign out if we can't recover
+          if (!originalRequest._retryWithoutAuth) {
+            await signOut({ callbackUrl: "/api/auth/signin" });
+          }
         }
       }
     }

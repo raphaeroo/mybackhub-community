@@ -23,6 +23,7 @@ import {
 import { fetchUserData, QueryKeys } from "~/core/api/queries";
 import { ssoFetchUserData, SSOQueryKeys, SSOUser } from "~/core/sso/queries";
 import { UserResponse } from "~/types/user";
+import { authService } from "~/core/auth";
 
 interface MeContextType {
   me: UserResponse | null;
@@ -64,9 +65,25 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   // Use SSO user ID or stored external ID for fetching user data
   const effectiveExternalId = ssoUserData?.id || externalId;
 
-  if (typeof window !== "undefined" && effectiveExternalId) {
-    localStorage.setItem("externalId", effectiveExternalId);
-  }
+  // Store both externalId and ensure we have a token when SSO user is available
+  useEffect(() => {
+    if (typeof window !== "undefined" && effectiveExternalId) {
+      localStorage.setItem("externalId", effectiveExternalId);
+      
+      // If we have SSO data, ensure we get an API token
+      if (ssoUserData && status === "authenticated") {
+        authService.getValidToken(effectiveExternalId, {
+          id: ssoUserData.id,
+          externalId: ssoUserData.id,
+          email: ssoUserData.email,
+          firstName: ssoUserData.firstName,
+          lastName: ssoUserData.lastName,
+        }).catch(error => {
+          console.error("Failed to get API token:", error);
+        });
+      }
+    }
+  }, [effectiveExternalId, ssoUserData, status]);
 
   // Fetch user data only when we have an external ID
   const { data, error, isLoading, refetch } = useQuery<UserResponse>({
@@ -135,15 +152,17 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
         });
       }
 
-      setExternalId(data.id);
+      setExternalId(ssoUserData.id);
       setMe(data);
     } else if (
       error &&
       !isLoading &&
       ssoUserData &&
-      effectiveExternalId === ssoUserData.id
+      effectiveExternalId === ssoUserData.id &&
+      !isCreatingUser
     ) {
       // User doesn't exist but we have SSO data, create the user
+      // The authService will handle this in the interceptor, but we also create here as backup
       mutate({
         externalId: ssoUserData.id,
         username: `${ssoUserData.firstName}_${ssoUserData.id}`,
@@ -152,7 +171,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
         lastName: ssoUserData.lastName,
       });
     } else if (data && !ssoUserData) {
-      setExternalId(data.id);
+      setExternalId(data.externalId || data.id);
       setMe(data);
     }
   }, [
@@ -164,6 +183,7 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
     mutate,
     updateUserMutate,
     shouldUpdateUser,
+    isCreatingUser,
   ]);
 
   // Don't show loading/error states if user is not authenticated
