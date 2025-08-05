@@ -48,7 +48,7 @@ class AuthService {
   }
 
   async getToken(externalId: string): Promise<TokenResponse> {
-    const response = await fetch(`${this.apiBaseUrl}/auth/token`, {
+    const response = await fetch(`${this.apiBaseUrl}auth/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ class AuthService {
       throw new Error('No token available to refresh');
     }
 
-    const response = await fetch(`${this.apiBaseUrl}/auth/refresh`, {
+    const response = await fetch(`${this.apiBaseUrl}auth/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ class AuthService {
       throw new Error('No token available to verify');
     }
 
-    const response = await fetch(`${this.apiBaseUrl}/auth/verify`, {
+    const response = await fetch(`${this.apiBaseUrl}auth/verify`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.accessToken}`,
