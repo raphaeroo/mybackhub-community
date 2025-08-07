@@ -73,7 +73,7 @@ function MyTopicsContent() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to create post"
+        error instanceof Error ? error.message : "Failed to create post",
       );
     },
   });
@@ -90,19 +90,19 @@ function MyTopicsContent() {
   });
 
   const { mutate: bookmarkMutate } = useMutation({
-      mutationFn: bookmarkPost,
-      onSuccess: () => {
-        refetchMe();
-      },
-      onError: (error) => {
-        toast.error(
-          error instanceof Error ? error.message : "Failed to remove bookmark"
-        );
-      },
-    });
+    mutationFn: bookmarkPost,
+    onSuccess: () => {
+      refetchMe();
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to remove bookmark",
+      );
+    },
+  });
 
   const [categoryOrder, setCategoryOrder] = useState<CategoryOrder | null>(
-    null
+    null,
   );
 
   const handleOrderChange = useCallback(
@@ -117,8 +117,8 @@ function MyTopicsContent() {
             [...prev].sort(
               (a, b) =>
                 new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-            )
+                new Date(a.createdAt).getTime(),
+            ),
           );
           break;
         case CategoryOrder.MostLiked:
@@ -126,34 +126,34 @@ function MyTopicsContent() {
           break;
         case CategoryOrder.MostComments:
           setTopics((prev) =>
-            [...prev].sort((a, b) => b.commentsCount - a.commentsCount)
+            [...prev].sort((a, b) => b.commentsCount - a.commentsCount),
           );
           break;
       }
     },
-    [topics]
+    [topics],
   );
 
   useEffect(() => {
     if (!isLoading && data) {
       let filteredTopics = data;
-      
+
       // Filter by category if categoryId is present
       if (categoryId && categoryId !== "all") {
         filteredTopics = data.filter(
-          (topic) => topic.category.id.toString() === categoryId
+          (topic) => topic.category.id.toString() === categoryId,
         );
       }
-      
+
       // Filter by search term
       if (searchTerm) {
         filteredTopics = filteredTopics.filter(
           (topic) =>
             topic.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            topic.content.toLowerCase().includes(searchTerm.toLowerCase())
+            topic.content.toLowerCase().includes(searchTerm.toLowerCase()),
         );
       }
-      
+
       setTopics(filteredTopics);
     }
   }, [isLoading, data, categoryId, searchTerm]);
@@ -214,7 +214,7 @@ function MyTopicsContent() {
               <Link
                 key={topic.id}
                 href={`/topic/${topic.id}?categoryName=${encodeURIComponent(
-                  topic.category.name
+                  topic.category.name,
                 )}&categoryId=${topic.category.id}&from=${pathname}`}
               >
                 <Card className="hover:shadow-lg transition-shadow">
@@ -227,7 +227,7 @@ function MyTopicsContent() {
                         <LexicalRenderer content={topic.content} />
                       </CardContent>
                     </div>
-                    <div className="pr-2">
+                    <div className="pr-6">
                       <Button
                         variant="outline"
                         onClick={(e) => {
@@ -282,7 +282,9 @@ function MyTopicsContent() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 font-medium mt-4 md:mt-0">
-                      <div className={`flex items-center ${me?.postsLiked?.includes(topic.id) ? "text-primary" : ""}`}>
+                      <div
+                        className={`flex items-center ${me?.postsLiked?.includes(topic.id) ? "text-primary" : ""}`}
+                      >
                         <ThumbsUpIcon className="h-4 w-4" />
                         <span className="ml-1 text-xs">
                           {topic.likes} likes
@@ -357,9 +359,9 @@ function MyTopicsContent() {
           <Select
             value={
               categoryId
-                ? categoriesData?.find(
-                    (cat: Category) => cat.id.toString() === categoryId
-                  )?.name.toLowerCase() || "all"
+                ? categoriesData
+                    ?.find((cat: Category) => cat.id.toString() === categoryId)
+                    ?.name.toLowerCase() || "all"
                 : "all"
             }
             onValueChange={(value) => {
@@ -367,13 +369,13 @@ function MyTopicsContent() {
                 router.push(pathname);
               } else {
                 const category = categoriesData?.find(
-                  (cat: Category) => cat.name.toLowerCase() === value
+                  (cat: Category) => cat.name.toLowerCase() === value,
                 );
                 if (category) {
                   router.push(
                     pathname +
                       "?" +
-                      createQueryString("categoryId", category.id.toString())
+                      createQueryString("categoryId", category.id.toString()),
                   );
                 }
               }

@@ -70,13 +70,13 @@ export default function Page() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to bookmark post"
+        error instanceof Error ? error.message : "Failed to bookmark post",
       );
     },
   });
 
   const [categoryOrder, setCategoryOrder] = useState<CategoryOrder>(
-    CategoryOrder.MostRecent
+    CategoryOrder.MostRecent,
   );
 
   useEffect(() => {
@@ -100,8 +100,8 @@ export default function Page() {
         setTopics((prev) =>
           [...prev].sort(
             (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          )
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          ),
         );
         break;
       case CategoryOrder.MostLiked:
@@ -109,7 +109,7 @@ export default function Page() {
         break;
       case CategoryOrder.MostComments:
         setTopics((prev) =>
-          [...prev].sort((a, b) => b.commentsCount - a.commentsCount)
+          [...prev].sort((a, b) => b.commentsCount - a.commentsCount),
         );
         break;
     }
@@ -118,16 +118,16 @@ export default function Page() {
   useEffect(() => {
     if (!isLoading && data) {
       let filteredTopics = data;
-      
+
       // Filter by search term
       if (searchTerm) {
         filteredTopics = data.filter(
           (topic) =>
             topic.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            topic.content.toLowerCase().includes(searchTerm.toLowerCase())
+            topic.content.toLowerCase().includes(searchTerm.toLowerCase()),
         );
       }
-      
+
       setTopics(filteredTopics);
     }
   }, [isLoading, data, searchTerm]);
@@ -207,9 +207,9 @@ export default function Page() {
               <Link
                 key={topic.id}
                 href={`/topic/${topic.id}?categoryName=${encodeURIComponent(
-                  searchParams.get("title") || "Category"
+                  searchParams.get("title") || "Category",
                 )}&categoryId=${searchParams.get(
-                  "categoryId"
+                  "categoryId",
                 )}&from=${pathname}`}
               >
                 <Card className="hover:shadow-lg transition-shadow">
@@ -222,7 +222,7 @@ export default function Page() {
                         <LexicalRenderer content={topic.content} />
                       </CardContent>
                     </div>
-                    <div className="pr-2">
+                    <div className="pr-6">
                       <Button
                         variant="outline"
                         onClick={(e) => {
@@ -275,7 +275,9 @@ export default function Page() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 font-medium mt-4 md:mt-0">
-                      <div className={`flex items-center ${me?.postsLiked?.includes(topic.id) ? "text-primary" : ""}`}>
+                      <div
+                        className={`flex items-center ${me?.postsLiked?.includes(topic.id) ? "text-primary" : ""}`}
+                      >
                         <ThumbsUpIcon className="h-4 w-4" />
                         <span className="ml-1 text-xs">
                           {topic.likes} likes

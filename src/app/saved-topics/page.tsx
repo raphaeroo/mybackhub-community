@@ -85,13 +85,13 @@ function SavedTopicsContent() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to remove bookmark"
+        error instanceof Error ? error.message : "Failed to remove bookmark",
       );
     },
   });
 
   const [categoryOrder, setCategoryOrder] = useState<CategoryOrder | null>(
-    null
+    null,
   );
 
   const handleOrderChange = (order: CategoryOrder) => {
@@ -104,8 +104,8 @@ function SavedTopicsContent() {
         setTopics((prev) =>
           [...prev].sort(
             (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          )
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          ),
         );
         break;
       case CategoryOrder.MostLiked:
@@ -113,7 +113,7 @@ function SavedTopicsContent() {
         break;
       case CategoryOrder.MostComments:
         setTopics((prev) =>
-          [...prev].sort((a, b) => b.commentsCount - a.commentsCount)
+          [...prev].sort((a, b) => b.commentsCount - a.commentsCount),
         );
         break;
     }
@@ -135,7 +135,7 @@ function SavedTopicsContent() {
     let filteredTopics = data;
     if (categoryId && categoryId !== "all") {
       filteredTopics = data.filter(
-        (topic) => topic.category.id.toString() === categoryId
+        (topic) => topic.category.id.toString() === categoryId,
       );
     }
 
@@ -144,7 +144,7 @@ function SavedTopicsContent() {
       filteredTopics = filteredTopics.filter(
         (topic) =>
           topic.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          topic.content.toLowerCase().includes(searchTerm.toLowerCase())
+          topic.content.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -208,7 +208,7 @@ function SavedTopicsContent() {
               <Link
                 key={topic.id}
                 href={`/topic/${topic.id}?categoryName=${encodeURIComponent(
-                  topic.category.name
+                  topic.category.name,
                 )}&categoryId=${topic.category.id}&from=${pathname}`}
               >
                 <Card className="hover:shadow-lg transition-shadow">
@@ -221,7 +221,7 @@ function SavedTopicsContent() {
                         <LexicalRenderer content={topic.content} />
                       </CardContent>
                     </div>
-                    <div className="pr-2">
+                    <div className="pr-6">
                       <Button
                         variant="outline"
                         onClick={(e) => {
@@ -263,7 +263,9 @@ function SavedTopicsContent() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 font-medium mt-4 md:mt-0">
-                      <div className={`flex items-center ${me?.postsLiked?.includes(topic.id) ? "text-primary" : ""}`}>
+                      <div
+                        className={`flex items-center ${me?.postsLiked?.includes(topic.id) ? "text-primary" : ""}`}
+                      >
                         <ThumbsUpIcon className="h-4 w-4" />
                         <span className="ml-1 text-xs">
                           {topic.likes} likes
@@ -328,9 +330,9 @@ function SavedTopicsContent() {
           <Select
             value={
               categoryId
-                ? categoriesData?.find(
-                    (cat: Category) => cat.id.toString() === categoryId
-                  )?.name.toLowerCase() || "all"
+                ? categoriesData
+                    ?.find((cat: Category) => cat.id.toString() === categoryId)
+                    ?.name.toLowerCase() || "all"
                 : "all"
             }
             onValueChange={(value) => {
@@ -338,13 +340,13 @@ function SavedTopicsContent() {
                 router.push(pathname);
               } else {
                 const category = categoriesData?.find(
-                  (cat: Category) => cat.name.toLowerCase() === value
+                  (cat: Category) => cat.name.toLowerCase() === value,
                 );
                 if (category) {
                   router.push(
                     pathname +
                       "?" +
-                      createQueryString("categoryId", category.id.toString())
+                      createQueryString("categoryId", category.id.toString()),
                   );
                 }
               }
