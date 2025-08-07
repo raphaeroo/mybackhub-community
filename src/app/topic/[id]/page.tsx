@@ -1,4 +1,5 @@
 "use client";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -28,12 +29,13 @@ import { Loader } from "~/components/loader";
 import { Comment } from "~/types/comment";
 import { LexicalRenderer } from "~/components/lexical-renderer";
 import { useMe } from "~/Contexts/meContext";
-import { useMemo, useState } from "react";
+
 import {
   commentOnContent,
   toggleLikePost,
   CreateCommentDto,
   toggleLikeComment,
+  bookmarkPost,
 } from "~/core/api/mutations";
 import { toast } from "sonner";
 
@@ -58,6 +60,13 @@ export default function Page({}) {
     }
     return me?.postsLiked.includes(postId);
   }, [me?.postsLiked, postId]);
+
+  const postBookmarked = useMemo(() => {
+    if (!me?.bookmarks) {
+      return false;
+    }
+    return me?.bookmarks.find((bookmark) => bookmark === postId);
+  }, [me?.bookmarks, postId]);
 
   const {
     data: currentTopic,
@@ -92,7 +101,27 @@ export default function Page({}) {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to like post"
+        error instanceof Error ? error.message : "Failed to like post",
+      );
+    },
+  });
+
+  const { mutate: bookmarkPostMutate } = useMutation({
+    mutationFn: () =>
+      bookmarkPost({
+        postId,
+        userId: me?.id,
+        include: !postBookmarked,
+      }),
+    onSuccess: () => {
+      if (!postBookmarked) {
+        toast.success("Post bookmarked successfully!");
+      }
+      refetchMe();
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to bookmark post",
       );
     },
   });
@@ -111,7 +140,7 @@ export default function Page({}) {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to like comment"
+        error instanceof Error ? error.message : "Failed to like comment",
       );
     },
   });
@@ -124,7 +153,7 @@ export default function Page({}) {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to add comment"
+        error instanceof Error ? error.message : "Failed to add comment",
       );
     },
   });
@@ -410,11 +439,14 @@ export default function Page({}) {
             onClick={() => likePostMutate()}
           >
             <ThumbsUpIcon className="h-4 w-4" />
-            {postLiked ? 'Liked' : 'Like'}
+            {postLiked ? "Liked" : "Like"}
           </Button>
-          <Button variant="outline">
+          <Button
+            variant={postBookmarked ? "default" : "outline"}
+            onClick={() => bookmarkPostMutate()}
+          >
             <BookmarkIcon className="h-4 w-4" />
-            Save
+            {postBookmarked ? "Saved" : "Save"}
           </Button>
         </div>
       </div>
