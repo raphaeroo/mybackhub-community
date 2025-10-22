@@ -22,7 +22,6 @@ import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { UserInfo } from "./user-info";
 import { useActive } from "~/Contexts/activeContext";
-import { SSO_API } from "~/core/api";
 
 // Menu items.
 const items = [
@@ -58,26 +57,16 @@ export function AppSidebar() {
   const { activeName, setActiveName } = useActive();
 
   const handleSignOut = async () => {
-    // Sign out from NextAuth
-    await nextAuthSignOut({ redirect: false });
-    
-    // Call SSO logout endpoint
-    try {
-      await SSO_API.post("/auth/logout", {}, {
-        withCredentials: true,
-      });
-
-    } catch (error) {
-      console.error("Failed to logout from SSO:", error);
-    }
-
-    // Remove accessToken from localStorage
+    // Remove accessToken from localStorage first
     if (typeof window !== "undefined") {
       localStorage.removeItem("accessToken");
     }
-    
-    // Redirect to main page
-    window.location.href = "https://mybackhub.com/";
+
+    // Sign out from NextAuth (clears local session)
+    await nextAuthSignOut({ redirect: false });
+
+    // Redirect to SSO logout page which will clear SSO session
+    window.location.href = "https://sso.mybackhub.com/auth/logout";
   };
 
   if (status !== "authenticated") {
