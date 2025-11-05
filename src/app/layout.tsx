@@ -73,20 +73,18 @@ export default async function RootLayout({
         className={`${openSans.variable} ${gotham.variable} antialiased font-mono`}
       >
         <SessionProvider session={session}>
-        <SidebarProvider>
-          <ActiveProvider>
-            <SidebarAdapter />
-          </ActiveProvider>
-          <main className="w-full bg-gray-50">
-            <SidebarTriggerWrapper />
-            <QueryClientProvider>
-              <MeProvider>
-                {children}
-              </MeProvider>
-            </QueryClientProvider>
-          </main>
-        </SidebarProvider>
-        <Toaster />
+          <MeProvider>
+            <SidebarProvider>
+              <ActiveProvider>
+                <SidebarAdapter />
+              </ActiveProvider>
+              <main className="w-full bg-gray-50">
+                <SidebarTriggerWrapper />
+                <QueryClientProvider>{children}</QueryClientProvider>
+              </main>
+            </SidebarProvider>
+            <Toaster />
+          </MeProvider>
         </SessionProvider>
       </body>
     </html>
