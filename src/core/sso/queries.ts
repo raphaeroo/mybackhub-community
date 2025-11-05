@@ -14,7 +14,7 @@ export type SSOUser = {
   createdAt: string;
   id: string;
   subscriptionName: string | null;
-  subscriptionType: string | null;
+  subscriptionType?: number;
 };
 
 enum SSOQueryKeys {

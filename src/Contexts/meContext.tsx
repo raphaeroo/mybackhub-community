@@ -28,6 +28,8 @@ import { authService } from "~/core/auth";
 interface MeContextType {
   me: UserResponse | null;
   setMe: (user: UserResponse | null) => void;
+  isLoading: boolean;
+  subscriptionType?: number;
   refetch: (
     options?: RefetchOptions
   ) => Promise<QueryObserverResult<UserResponse, Error>>;
@@ -69,18 +71,20 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (typeof window !== "undefined" && effectiveExternalId) {
       localStorage.setItem("externalId", effectiveExternalId);
-      
+
       // If we have SSO data, ensure we get an API token
       if (ssoUserData && status === "authenticated") {
-        authService.getValidToken(effectiveExternalId, {
-          id: ssoUserData.id,
-          externalId: ssoUserData.id,
-          email: ssoUserData.email,
-          firstName: ssoUserData.firstName,
-          lastName: ssoUserData.lastName,
-        }).catch(error => {
-          console.error("Failed to get API token:", error);
-        });
+        authService
+          .getValidToken(effectiveExternalId, {
+            id: ssoUserData.id,
+            externalId: ssoUserData.id,
+            email: ssoUserData.email,
+            firstName: ssoUserData.firstName,
+            lastName: ssoUserData.lastName,
+          })
+          .catch((error) => {
+            console.error("Failed to get API token:", error);
+          });
       }
     }
   }, [effectiveExternalId, ssoUserData, status]);
@@ -189,7 +193,15 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   // Don't show loading/error states if user is not authenticated
   if (status === "unauthenticated" || status === "loading") {
     return (
-      <MeContext.Provider value={{ me: null, setMe, refetch }}>
+      <MeContext.Provider
+        value={{
+          me: null,
+          setMe,
+          refetch,
+          isLoading,
+          subscriptionType: ssoUserData?.subscriptionType,
+        }}
+      >
         {children}
       </MeContext.Provider>
     );
@@ -224,7 +236,15 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   return (
-    <MeContext.Provider value={{ me, setMe, refetch }}>
+    <MeContext.Provider
+      value={{
+        me,
+        setMe,
+        refetch,
+        isLoading,
+        subscriptionType: ssoUserData?.subscriptionType,
+      }}
+    >
       {children}
     </MeContext.Provider>
   );

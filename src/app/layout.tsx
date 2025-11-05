@@ -9,8 +9,9 @@ import "./globals.css";
 
 import SessionProvider from "~/providers/SessionProvider";
 import QueryClientProvider from "~/providers/QueryProvider";
-import { SidebarProvider, SidebarTrigger } from "~/components/ui/sidebar";
-import { AppSidebar } from "~/components/app-sidebar";
+import { SidebarAdapter } from "~/components/sidebar-adapter";
+import { SidebarProvider } from "@mybackhub/shared-sidebar/components/ui/sidebar";
+import { SidebarTriggerWrapper } from "~/components/sidebar-trigger-wrapper";
 import { ActiveProvider } from "~/Contexts/activeContext";
 import MeProvider from "~/providers/MeProvider";
 
@@ -74,10 +75,10 @@ export default async function RootLayout({
         <SessionProvider session={session}>
         <SidebarProvider>
           <ActiveProvider>
-            <AppSidebar />
+            <SidebarAdapter />
           </ActiveProvider>
           <main className="w-full bg-gray-50">
-            <SidebarTrigger />
+            <SidebarTriggerWrapper />
             <QueryClientProvider>
               <MeProvider>
                 {children}

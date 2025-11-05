@@ -1,0 +1,3 @@
+[submodule "src/shared/sidebar"]
+	path = src/shared/sidebar
+	url = https://github.com/nsite-medical/shared-sidebar.git
