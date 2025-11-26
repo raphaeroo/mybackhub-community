@@ -312,7 +312,8 @@ function MyTopicsContent() {
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                               className="bg-red-500 hover:bg-red-600"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.preventDefault();
                                 deleteMutate(topic.id);
                                 setDeleteDialogOpen(null);
                               }}

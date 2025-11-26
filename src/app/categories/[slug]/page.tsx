@@ -258,10 +258,10 @@ export default function Page() {
                       <div className="flex items-center gap-2 mb-2 md:mb-0">
                         <Avatar className="w-8 h-8">
                           <AvatarFallback className="font-medium">
-                            {topic.author.firstName[0]}
+                            {topic.author?.firstName?.[0]}
                           </AvatarFallback>
                         </Avatar>
-                        <p className="font-medium">{topic.author.firstName}</p>
+                        <p className="font-medium">{topic.author?.firstName}</p>
                       </div>
                       <div className="flex items-center md:items-center gap-2 text-xs text-gray-500">
                         <DotIcon className="text-gray-300 hidden md:block" />
