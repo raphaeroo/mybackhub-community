@@ -139,4 +139,15 @@ export const updateUser = async (userId: string, userData: Partial<CreateUser>) 
       error instanceof Error ? error.message : "Failed to update user"
     );
   }
-}
+};
+
+export const deletePost = async (postId: string) => {
+  try {
+    const { data } = await APP_API.delete(`/posts/${postId}`);
+    return data;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to delete post"
+    );
+  }
+};

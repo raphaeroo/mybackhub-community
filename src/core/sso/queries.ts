@@ -12,6 +12,9 @@ export type SSOUser = {
   dominantHand: "right" | "left" | null;
   roles: string[];
   createdAt: string;
+  profileImageUrl?: string | null;
+  dateOfBirth?: string | null;
+  phoneNumber?: string | null;
   id: string;
   subscriptionName: string | null;
   subscriptionType?: number;

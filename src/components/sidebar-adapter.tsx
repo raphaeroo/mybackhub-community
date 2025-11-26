@@ -13,7 +13,7 @@ import { useMe } from "~/Contexts/meContext";
 
 export function SidebarAdapter() {
   const { status } = useSession();
-  const { me, isLoading, subscriptionType } = useMe();
+  const { me, isLoading, subscriptionType, profilePictureUrl } = useMe();
   const { activeName, setActiveName } = useActive();
 
   const isLightTicket = subscriptionType === 1;
@@ -103,6 +103,7 @@ export function SidebarAdapter() {
               firstName: me.firstName,
               lastName: me.lastName,
               email: me.email,
+              avatar: profilePictureUrl || undefined,
             }
           : undefined
       }

@@ -2,12 +2,13 @@
 import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   BookmarkIcon,
   DotIcon,
   ThumbsUpIcon,
   MessageCircle,
+  Trash2,
 } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
@@ -22,6 +23,17 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 import { loadCommentsByPostId, loadPost, QueryKeys } from "~/core/api/queries";
 import { PostCategory } from "~/types/post";
 
@@ -36,13 +48,15 @@ import {
   CreateCommentDto,
   toggleLikeComment,
   bookmarkPost,
+  deletePost,
 } from "~/core/api/mutations";
 import { toast } from "sonner";
 
 export default function Page({}) {
-  const { me, refetch: refetchMe } = useMe();
+  const { me, refetch: refetchMe, roles } = useMe();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const router = useRouter();
 
   const [newComment, setNewComment] = useState<string | undefined>(undefined);
   const [newReply, setNewReply] = useState<string | undefined>(undefined);
@@ -67,6 +81,10 @@ export default function Page({}) {
     }
     return me?.bookmarks.find((bookmark) => bookmark === postId);
   }, [me?.bookmarks, postId]);
+
+  const isAdmin = useMemo(() => {
+    return roles.includes("admin");
+  }, [roles]);
 
   const {
     data: currentTopic,
@@ -157,6 +175,24 @@ export default function Page({}) {
       );
     },
   });
+
+  const { mutate: deleteMutate } = useMutation({
+    mutationFn: deletePost,
+    onSuccess: () => {
+      toast.success("Post deleted successfully!");
+      router.push(from);
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete post",
+      );
+    },
+  });
+
+  const canDeletePost = useMemo(() => {
+    if (!currentTopic || !me) return false;
+    return isAdmin || currentTopic.author.id === me.id;
+  }, [isAdmin, currentTopic, me]);
 
   // Organize comments into hierarchical structure
   const organizeComments = (comments: Comment[]): Comment[] => {
@@ -448,6 +484,34 @@ export default function Page({}) {
             <BookmarkIcon className="h-4 w-4" />
             {postBookmarked ? "Saved" : "Save"}
           </Button>
+          {canDeletePost && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">
+                  <Trash2 className="h-4 w-4 text-red-500" />
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Post</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete this post? This action
+                    cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-red-500 hover:bg-red-600"
+                    onClick={() => deleteMutate(postId)}
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </div>
       <Separator />

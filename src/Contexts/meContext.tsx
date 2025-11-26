@@ -30,6 +30,8 @@ interface MeContextType {
   setMe: (user: UserResponse | null) => void;
   isLoading: boolean;
   subscriptionType?: number;
+  roles: string[];
+  profilePictureUrl?: string | null;
   refetch: (
     options?: RefetchOptions
   ) => Promise<QueryObserverResult<UserResponse, Error>>;
@@ -200,6 +202,8 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
           refetch,
           isLoading,
           subscriptionType: ssoUserData?.subscriptionType,
+          roles: ssoUserData?.roles || [],
+          profilePictureUrl: ssoUserData?.profileImageUrl,
         }}
       >
         {children}
@@ -243,6 +247,8 @@ export const MeProvider: React.FC<{ children: React.ReactNode }> = ({
         refetch,
         isLoading,
         subscriptionType: ssoUserData?.subscriptionType,
+        roles: ssoUserData?.roles || [],
+        profilePictureUrl: ssoUserData?.profileImageUrl,
       }}
     >
       {children}

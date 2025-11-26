@@ -11,6 +11,7 @@ import {
   ClipboardListIcon,
   Loader,
   BookmarkCheck,
+  Trash2,
 } from "lucide-react";
 import dayjs from "dayjs";
 import { toast } from "sonner";
@@ -34,6 +35,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 
 import { useQueryString } from "~/utils";
 import { CategoryOrder } from "~/constants";
@@ -45,7 +57,7 @@ import { loadCategories, loadPostByUser, QueryKeys } from "~/core/api/queries";
 import { useMe } from "~/Contexts/meContext";
 import { Category } from "~/types/category";
 import { LexicalRenderer } from "~/components/lexical-renderer";
-import { bookmarkPost, createPost } from "~/core/api/mutations";
+import { bookmarkPost, createPost, deletePost } from "~/core/api/mutations";
 
 function MyTopicsContent() {
   const pathname = usePathname();
@@ -97,6 +109,19 @@ function MyTopicsContent() {
     onError: (error) => {
       toast.error(
         error instanceof Error ? error.message : "Failed to remove bookmark",
+      );
+    },
+  });
+
+  const { mutate: deleteMutate } = useMutation({
+    mutationFn: deletePost,
+    onSuccess: () => {
+      toast.success("Post deleted successfully!");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete post",
       );
     },
   });
@@ -227,7 +252,7 @@ function MyTopicsContent() {
                         <LexicalRenderer content={topic.content} />
                       </CardContent>
                     </div>
-                    <div className="pr-6">
+                    <div className="pr-6 flex gap-2">
                       <Button
                         variant="outline"
                         onClick={(e) => {
@@ -256,6 +281,46 @@ function MyTopicsContent() {
                           <Bookmark />
                         )}
                       </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                          >
+                            <Trash2 className="text-red-500" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                        >
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this post? This
+                              action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              className="bg-red-500 hover:bg-red-600"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                deleteMutate(topic.id);
+                              }}
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                   <CardFooter className="flex flex-col md:flex-row justify-start md:justify-between items-start md:items-center pt-2">
