@@ -129,6 +129,7 @@ function MyTopicsContent() {
   const [categoryOrder, setCategoryOrder] = useState<CategoryOrder | null>(
     null,
   );
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | null>(null);
 
   const handleOrderChange = useCallback(
     (order: CategoryOrder) => {
@@ -281,24 +282,25 @@ function MyTopicsContent() {
                           <Bookmark />
                         )}
                       </Button>
-                      <AlertDialog>
+                      <AlertDialog
+                        open={deleteDialogOpen === topic.id}
+                        onOpenChange={(open) =>
+                          setDeleteDialogOpen(open ? topic.id : null)
+                        }
+                      >
                         <AlertDialogTrigger asChild>
                           <Button
                             variant="outline"
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
+                              setDeleteDialogOpen(topic.id);
                             }}
                           >
                             <Trash2 className="text-red-500" />
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                          }}
-                        >
+                        <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete Post</AlertDialogTitle>
                             <AlertDialogDescription>
@@ -310,10 +312,9 @@ function MyTopicsContent() {
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                               className="bg-red-500 hover:bg-red-600"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
+                              onClick={() => {
                                 deleteMutate(topic.id);
+                                setDeleteDialogOpen(null);
                               }}
                             >
                               Delete

@@ -180,7 +180,7 @@ export default function Page({}) {
     mutationFn: deletePost,
     onSuccess: () => {
       toast.success("Post deleted successfully!");
-      router.push(from);
+      router.push('/');
     },
     onError: (error) => {
       toast.error(
