@@ -361,12 +361,12 @@ export default function Page({}) {
     if (!from) return "Home";
     const parts = from.split("/");
     const name =
-      parts.length > 1 ? parts[1][0].toUpperCase() + parts[1].slice(1) : "Home";
+      parts.length > 1 ? parts[1][0]?.toUpperCase() + parts[1].slice(1) : "Home";
 
     if (name.includes("-")) {
       return name
         .split("-")
-        .map((part) => part[0].toUpperCase() + part.slice(1))
+        .map((part) => part[0]?.toUpperCase() + part.slice(1))
         .join(" ");
     }
 
