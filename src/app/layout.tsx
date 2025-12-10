@@ -72,7 +72,7 @@ export default async function RootLayout({
       <body
         className={`${openSans.variable} ${gotham.variable} antialiased font-mono`}
       >
-        <SessionProvider session={session}>
+        <SessionProvider session={session} refetchInterval={30 * 60}>
           <QueryClientProvider>
             <MeProvider>
               <SidebarProvider>
