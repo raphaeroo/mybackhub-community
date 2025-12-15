@@ -6,7 +6,7 @@ async function refreshAccessToken(token: JWT) {
     const params = new URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: token.refreshToken as string,
-      client_id: process.env.SSO_CLIENT_ID!,
+      client_id: process.env.NEXT_PUBLIC_SSO_CLIENT_ID!,
       client_secret: process.env.SSO_CLIENT_SECRET!,
     });
 
