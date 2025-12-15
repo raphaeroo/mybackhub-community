@@ -6,6 +6,7 @@ import {
   Home,
   Bookmark,
   Edit,
+  LayoutGrid,
 } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useActive } from "~/Contexts/activeContext";
@@ -88,6 +89,11 @@ export function SidebarAdapter() {
           {
             label: "More Apps",
             items: [
+              {
+                title: "Dashboard",
+                url: "https://platform.mybackhub.com/",
+                icon: LayoutGrid,
+              },
               {
                 title: "Account",
                 url: "https://account.mybackhub.com/",
