@@ -63,7 +63,6 @@ export async function apiFetch(
     ...options,
     headers,
   });
-  const isDev = process.env.NODE_ENV === "development";
 
   // Check for 401 errors with shouldLogout flag
   if (response.status === 401) {
