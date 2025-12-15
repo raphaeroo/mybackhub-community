@@ -112,25 +112,18 @@ APP_API.interceptors.request.use(
 SSO_API.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const isDev = process.env.NODE_ENV === "development";
     const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Session expired - clear local storage and redirect to SSO logout
+      // Token expired - clear local storage and redirect to NextAuth signin
+      // DO NOT call SSO logout - that destroys the SSO session!
       if (typeof window !== "undefined") {
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("externalId");
 
-        // Sign out from NextAuth (clears local session)
+        // Sign out from NextAuth and redirect to signin
+        // This will trigger a fresh OAuth flow with SSO
         const { signOut } = await import("next-auth/react");
-        await signOut({ redirect: false });
-
-        // Redirect to SSO logout page which will clear SSO session
-        window.location.href = isDev
-          ? `https://staging-sso.mybackhub.com/auth/logout?return_to=${encodeURIComponent(
-              process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
-            )}`
-          : `https://sso.mybackhub.com/auth/logout?return_to=${encodeURIComponent(
-              process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
-            )}`;
+        await signOut({ callbackUrl: "/api/auth/signin" });
       }
       return Promise.reject(error);
     }

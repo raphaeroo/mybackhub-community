@@ -70,22 +70,12 @@ export async function apiFetch(
     try {
       const data = await response.clone().json();
       if (data.shouldLogout) {
-        // Session expired - clear local storage and redirect to SSO logout
         if (typeof window !== "undefined") {
           localStorage.removeItem("accessToken");
 
-          // Sign out from NextAuth (clears local session)
+          // Just trigger NextAuth signin - don't destroy SSO session
           const { signOut } = await import("next-auth/react");
-          await signOut({ redirect: false });
-
-          // Redirect to SSO logout page which will clear SSO session
-          window.location.href = isDev
-            ? `https://staging-sso.mybackhub.com/auth/logout?return_to=${encodeURIComponent(
-                process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
-              )}`
-            : `https://sso.mybackhub.com/auth/logout?return_to=${encodeURIComponent(
-                process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
-              )}`;
+          await signOut({ callbackUrl: "/api/auth/signin" });
         }
         throw new Error("Session expired");
       }
