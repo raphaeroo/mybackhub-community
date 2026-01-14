@@ -11,7 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -53,7 +53,7 @@ import {
 import { toast } from "sonner";
 
 export default function Page({}) {
-  const { me, refetch: refetchMe, roles } = useMe();
+  const { me, refetch: refetchMe, roles, profilePictureUrl } = useMe();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -247,6 +247,9 @@ export default function Page({}) {
       >
         <div className="flex gap-3 py-4">
           <Avatar className="w-10 h-10 flex-shrink-0">
+            {comment.author.id === me?.id && (
+              <AvatarImage src={profilePictureUrl || undefined} alt={comment.author.firstName} />
+            )}
             <AvatarFallback className="font-medium">
               {comment.author.firstName[0]}
             </AvatarFallback>
@@ -447,6 +450,9 @@ export default function Page({}) {
         <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-2">
           <div className="flex items-center gap-2 mb-2 md:mb-0">
             <Avatar className="w-10 h-10">
+              {currentTopic?.author.id === me?.id && (
+                <AvatarImage src={profilePictureUrl || undefined} alt={currentTopic?.author.firstName} />
+              )}
               <AvatarFallback className="font-medium">
                 {currentTopic?.author.firstName[0]}
               </AvatarFallback>
@@ -517,6 +523,7 @@ export default function Page({}) {
       <Separator />
       <div className="flex gap-2 md:gap-6 items-center justify-between my-4">
         <Avatar className="w-10 h-10">
+          <AvatarImage src={profilePictureUrl || undefined} alt={me?.firstName} />
           <AvatarFallback className="font-medium">
             {me?.firstName[0]}
           </AvatarFallback>

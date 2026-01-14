@@ -24,7 +24,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import Link from "next/link";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
@@ -64,7 +64,7 @@ function MyTopicsContent() {
   const router = useRouter();
 
   const { createQueryString } = useQueryString();
-  const { me, refetch: refetchMe } = useMe();
+  const { me, refetch: refetchMe, profilePictureUrl } = useMe();
 
   const [topics, setTopics] = useState<PostCategory[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -329,6 +329,7 @@ function MyTopicsContent() {
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                       <div className="flex items-center gap-2 mb-2 md:mb-0">
                         <Avatar className="w-8 h-8">
+                          <AvatarImage src={profilePictureUrl || undefined} alt={me?.firstName} />
                           <AvatarFallback className="font-medium">
                             {me?.firstName[0]}
                           </AvatarFallback>
