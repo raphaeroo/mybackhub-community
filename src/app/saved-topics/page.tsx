@@ -20,7 +20,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import Link from "next/link";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
@@ -52,7 +52,7 @@ function SavedTopicsContent() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { me } = useMe();
+  const { me, profilePictureUrl } = useMe();
 
   const { createQueryString } = useQueryString();
 
@@ -243,6 +243,9 @@ function SavedTopicsContent() {
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                       <div className="flex items-center gap-2 mb-2 md:mb-0">
                         <Avatar className="w-8 h-8">
+                          {topic.author.id === me?.id && (
+                            <AvatarImage src={profilePictureUrl || undefined} alt={topic.author.firstName} />
+                          )}
                           <AvatarFallback className="font-medium">
                             {topic.author.firstName[0]}
                           </AvatarFallback>
